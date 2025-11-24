@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: article-publish
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/article_hub?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+        use_sql_comments: true
+    show-sql: false
+  
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      indent-output: true
+    deserialization:
+      fail-on-unknown-properties: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+jwt:
+  secret: your-secret-key-change-it-in-production-environment-with-a-long-secure-string
+  expiration: 86400000  # 24 hours
+
+logging:
+  level:
+    root: INFO
+    com.articlehub: DEBUG
+    org.springframework.web: DEBUG
+  file:
+    name: logs/application.log
