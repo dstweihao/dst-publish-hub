@@ -8,7 +8,7 @@ import com.articlehub.entity.User;
 import com.articlehub.platform.PlatformPublisher;
 import com.articlehub.platform.PlatformPublisherFactory;
 import com.articlehub.platform.PublishResult;
-import com.articlehub.repository.ArticleRepository;
+import com.articlehub.repository.ArticleRepositoryExtension;
 import com.articlehub.repository.PlatformAccountRepository;
 import com.articlehub.repository.PlatformPublishRepository;
 import com.articlehub.repository.UserRepository;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class PublishService {
-    private final ArticleRepository articleRepository;
+    private final ArticleRepositoryExtension articleRepositoryExtension;
     private final PlatformPublishRepository platformPublishRepository;
     private final PlatformAccountRepository platformAccountRepository;
     private final UserRepository userRepository;
@@ -39,7 +39,7 @@ public class PublishService {
     public Map<String, PublishResult> publishToMultiplePlatforms(Long articleId, Long userId, List<String> platforms) {
         log.info("Publishing article {} to platforms: {}", articleId, platforms);
 
-        Article article = articleRepository.findById(articleId)
+        Article article = articleRepositoryExtension.findById(articleId)
             .orElseThrow(() -> new RuntimeException("Article not found"));
 
         if (!article.getUser().getId().equals(userId)) {
@@ -71,7 +71,7 @@ public class PublishService {
         // 更新文章状态
         article.setStatus("published");
         article.setPublishedAt(LocalDateTime.now());
-        articleRepository.save(article);
+        articleRepositoryExtension.save(article);
 
         log.info("Article {} published successfully", articleId);
         return results;
@@ -143,8 +143,8 @@ public class PublishService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
-        long totalArticles = articleRepository.countByUser(user);
-        long publishedArticles = articleRepository.countByUserAndStatus(user, "published");
+        long totalArticles = articleRepositoryExtension.countByUser(user);
+        long publishedArticles = articleRepositoryExtension.countByUserAndStatus(user, "published");
         long totalPublishes = platformPublishRepository.countByArticleUserAndStatus(user, "published");
 
         return PublishStatistics.builder()
@@ -169,7 +169,7 @@ public class PublishService {
             throw new RuntimeException("No failed publishes to retry");
         }
 
-        Article article = articleRepository.findById(articleId)
+        Article article = articleRepositoryExtension.findById(articleId)
             .orElseThrow(() -> new RuntimeException("Article not found"));
 
         List<String> platforms = failedPublishes.stream()

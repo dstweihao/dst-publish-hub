@@ -57,7 +57,7 @@ mysql -u root -p
 
 # 执行以下 SQL 命令
 CREATE DATABASE article_publish_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'article_user'@'localhost' IDENTIFIED BY 'article_password_123';
+CREATE USER 'article_user'@'localhost' IDENTIFIED BY '@@@123';
 GRANT ALL PRIVILEGES ON article_publish_db.* TO 'article_user'@'localhost';
 FLUSH PRIVILEGES;
 EXIT;
@@ -82,7 +82,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/article_publish_db?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=UTC
     username: article_user
-    password: article_password_123
+    password: @@@123
     driver-class-name: com.mysql.cj.jdbc.Driver
   
   jpa:

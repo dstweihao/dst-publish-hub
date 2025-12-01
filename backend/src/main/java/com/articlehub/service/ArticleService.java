@@ -3,7 +3,7 @@ package com.articlehub.service;
 import com.articlehub.dto.ArticleDTO;
 import com.articlehub.entity.Article;
 import com.articlehub.entity.User;
-import com.articlehub.repository.ArticleRepository;
+import com.articlehub.repository.ArticleRepositoryExtension;
 import com.articlehub.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
-    private final ArticleRepository articleRepository;
+    private final ArticleRepositoryExtension articleRepositoryExtension;
     private final UserRepository userRepository;
 
     @Transactional
@@ -36,12 +36,12 @@ public class ArticleService {
             .status("draft")
             .build();
 
-        return articleRepository.save(article);
+        return articleRepositoryExtension.save(article);
     }
 
     @Transactional
     public Article updateArticle(Long articleId, Long userId, ArticleDTO articleDTO) {
-        Article article = articleRepository.findById(articleId)
+        Article article = articleRepositoryExtension.findById(articleId)
             .orElseThrow(() -> new RuntimeException("Article not found"));
 
         if (!article.getUser().getId().equals(userId)) {
@@ -54,23 +54,23 @@ public class ArticleService {
         article.setTheme(articleDTO.getTheme());
         article.setTags(articleDTO.getTags());
 
-        return articleRepository.save(article);
+        return articleRepositoryExtension.save(article);
     }
 
     @Transactional
     public void deleteArticle(Long articleId, Long userId) {
-        Article article = articleRepository.findById(articleId)
+        Article article = articleRepositoryExtension.findById(articleId)
             .orElseThrow(() -> new RuntimeException("Article not found"));
 
         if (!article.getUser().getId().equals(userId)) {
             throw new RuntimeException("Unauthorized");
         }
 
-        articleRepository.delete(article);
+        articleRepositoryExtension.delete(article);
     }
 
     public Article getArticle(Long articleId) {
-        return articleRepository.findById(articleId)
+        return articleRepositoryExtension.findById(articleId)
             .orElseThrow(() -> new RuntimeException("Article not found"));
     }
 
@@ -78,12 +78,12 @@ public class ArticleService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User not found"));
-        return articleRepository.findByUser(user, pageable);
+        return articleRepositoryExtension.findByUser(user, pageable);
     }
 
     @Transactional
     public Article publishArticle(Long articleId, Long userId) {
-        Article article = articleRepository.findById(articleId)
+        Article article = articleRepositoryExtension.findById(articleId)
             .orElseThrow(() -> new RuntimeException("Article not found"));
 
         if (!article.getUser().getId().equals(userId)) {
@@ -94,6 +94,6 @@ public class ArticleService {
         article.setPublishedAt(LocalDateTime.now());
         article.setViewCount(0);
 
-        return articleRepository.save(article);
+        return articleRepositoryExtension.save(article);
     }
 }
