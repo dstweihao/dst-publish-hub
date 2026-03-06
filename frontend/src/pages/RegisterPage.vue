@@ -69,43 +69,84 @@ const handleRegister = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #16a085, #f4d03f, #3498db, #9b59b6);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .register-box {
-  background: white;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   padding: 3rem;
-  border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: transform 0.3s ease;
+  margin: 2rem 0;
+}
+
+.register-box:hover {
+  transform: translateY(-5px);
 }
 
 .register-box h1 {
   text-align: center;
   margin-bottom: 0.5rem;
-  color: #333;
+  color: #1f2937;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
 .subtitle {
   text-align: center;
-  color: #666;
-  margin-bottom: 2rem;
+  color: #4b5563;
+  margin-bottom: 2.5rem;
+  font-size: 1.1rem;
+}
+
+.el-button {
+  width: 100%;
+  margin-top: 1rem;
+  height: 44px;
+  font-size: 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #16a085 0%, #3498db 100%);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.el-button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(22, 160, 133, 0.4);
 }
 
 .register-footer {
   text-align: center;
-  margin-top: 1.5rem;
-  color: #666;
+  margin-top: 2rem;
+  color: #4b5563;
+  font-size: 0.95rem;
 }
 
 .register-footer a {
-  color: #409eff;
+  color: #3498db;
+  font-weight: 600;
   text-decoration: none;
+  transition: color 0.3s;
 }
 
 .register-footer a:hover {
+  color: #9b59b6;
   text-decoration: underline;
 }
 </style>

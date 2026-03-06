@@ -1,48 +1,39 @@
 package com.articlehub.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "platform_accounts", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"user_id", "platform"})
-})
+@Table(name = "platform_accounts")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class PlatformAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private String platform; // wechat, juejin, cnblogs, zhihu, csdn, toutiao, jianshu
+    private String platform;
+    private String username;
+    private String accountId;
+    private String credentials;
+    private String accessToken;
+    private String refreshToken;
 
-    @Column(nullable = false)
-    private String accountId; // 平台账号ID
+    @Builder.Default
+    private boolean isActive = true;
 
-    @Column(columnDefinition = "TEXT")
-    private String credentials; // 加密存储的认证信息
-
-    private String accountName; // 平台显示的账号名
-
-    @Column(name = "is_active")
-    private Boolean isActive = true;
-
-    @CreationTimestamp
-    @Column(nullable = false, updatable = false)
+    private LocalDateTime lastUsed;
     private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(nullable = false)
     private LocalDateTime updatedAt;
 }

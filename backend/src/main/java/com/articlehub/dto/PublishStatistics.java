@@ -6,12 +6,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class PublishStatistics {
     private long totalArticles;
     private long publishedArticles;
+    private long draftArticles;
+    private long archivedArticles;
+    private long totalViews;
+    private long totalLikes;
+    private long totalComments;
+    private long totalPlatforms;
+    private long activePlatforms;
     private long totalPublishes;
-    private float successRate;
 }

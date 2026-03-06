@@ -1,9 +1,9 @@
 -- 创建数据库
-CREATE DATABASE IF NOT EXISTS article_hub 
+CREATE DATABASE IF NOT EXISTS article_publish_db 
 CHARACTER SET utf8mb4 
 COLLATE utf8mb4_unicode_ci;
 
-USE article_hub;
+USE article_publish_db;
 
 -- 用户表
 CREATE TABLE IF NOT EXISTS users (
@@ -11,10 +11,15 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    full_name VARCHAR(255),
+    role VARCHAR(50),
     avatar VARCHAR(255),
+    bio TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     enabled BOOLEAN DEFAULT TRUE,
+    active BOOLEAN DEFAULT TRUE,
     INDEX idx_username (username),
     INDEX idx_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -26,9 +31,11 @@ CREATE TABLE IF NOT EXISTS articles (
     title VARCHAR(255) NOT NULL,
     content LONGTEXT,
     description TEXT,
+    category VARCHAR(100),
     theme VARCHAR(50) DEFAULT 'default',
     status VARCHAR(50) DEFAULT 'draft',
     view_count INT DEFAULT 0,
+    like_count INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     published_at TIMESTAMP NULL,
@@ -55,8 +62,11 @@ CREATE TABLE IF NOT EXISTS platform_accounts (
     platform VARCHAR(50) NOT NULL,
     account_id VARCHAR(100) NOT NULL,
     credentials TEXT,
-    account_name VARCHAR(100),
+    access_token TEXT,
+    refresh_token TEXT,
+    username VARCHAR(100),
     is_active BOOLEAN DEFAULT TRUE,
+    last_used TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -71,11 +81,13 @@ CREATE TABLE IF NOT EXISTS platform_publishes (
     article_id BIGINT NOT NULL,
     platform_account_id BIGINT,
     platform VARCHAR(50) NOT NULL,
+    platform_article_id VARCHAR(100),
     status VARCHAR(50) DEFAULT 'pending',
-    published_url VARCHAR(255),
+    platform_url VARCHAR(255),
     error_message TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     published_at TIMESTAMP NULL,
+    updated_at TIMESTAMP NULL,
     FOREIGN KEY (article_id) REFERENCES articles(id) ON DELETE CASCADE,
     FOREIGN KEY (platform_account_id) REFERENCES platform_accounts(id) ON DELETE SET NULL,
     UNIQUE KEY unique_article_platform (article_id, platform),

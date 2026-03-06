@@ -8,47 +8,39 @@
           placeholder="输入文章标题"
           class="title-input"
         />
-        <el-select v-model="article.theme" placeholder="选择主题">
-          <el-option label="默认主题" value="default" />
-          <el-option label="深色专业" value="dark" />
-          <el-option label="学术主题" value="academic" />
-          <el-option label="炫彩渐变" value="vibrant" />
+        <el-select v-model="article.theme" placeholder="选择排版样式">
+          <el-option label="默认排版 (适合技术)" value="default" />
+          <el-option label="GitHub排版 (黑白极简)" value="github" />
+          <el-option label="VuePress排版 (清新绿)" value="vuepress" />
+          <el-option label="MK-Cute排版 (可爱风)" value="mk-cute" />
+          <el-option label="Smart Blue (科技蓝)" value="smart-blue" />
+          <el-option label="Cyanisis (唯美青)" value="cyanisis" />
         </el-select>
+        <el-button type="success" @click="copyToWechat">
+          <el-icon class="el-icon--left"><DocumentCopy /></el-icon>
+          复制到公众号
+        </el-button>
         <el-button type="primary" @click="saveDraft" :loading="loading">保存草稿</el-button>
       </div>
     </div>
     
     <div class="editor-container">
-      <div class="editor-pane">
-        <div class="editor-toolbar">
-          <el-button-group>
-            <el-button size="small" @click="insertMarkdown('# ')">H1</el-button>
-            <el-button size="small" @click="insertMarkdown('## ')">H2</el-button>
-            <el-button size="small" @click="insertMarkdown('**加粗**')">加粗</el-button>
-            <el-button size="small" @click="insertMarkdown('*斜体*')">斜体</el-button>
-            <el-button size="small" @click="insertMarkdown('- ')">列表</el-button>
-            <el-button size="small" @click="insertMarkdown('```\n\n```')">代码块</el-button>
-          </el-button-group>
-        </div>
-        <textarea 
-          v-model="article.markdown"
-          placeholder="在此输入Markdown内容..."
-          class="markdown-textarea"
-        />
-      </div>
-      
-      <div class="preview-pane">
-        <div class="preview-header">预览</div>
-        <div class="preview-content" v-html="renderedHtml" />
-      </div>
+      <MdEditor 
+        v-model="article.markdown" 
+        theme="light"
+        :preview-theme="article.theme"
+        class="md-editor-wrapper"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue'
-import { marked } from 'marked'
+import { reactive, ref } from 'vue'
+import { MdEditor } from 'md-editor-v3'
+import 'md-editor-v3/lib/style.css'
 import { ElMessage } from 'element-plus'
+import { DocumentCopy } from '@element-plus/icons-vue'
 import { useArticleStore } from '@/stores/articleStore'
 
 const articleStore = useArticleStore()
@@ -60,29 +52,6 @@ const article = reactive({
   theme: 'default',
   content: ''
 })
-
-const renderedHtml = computed(() => {
-  try {
-    return marked(article.markdown)
-  } catch (e) {
-    return '<p>Markdown 解析错误</p>'
-  }
-})
-
-const insertMarkdown = (syntax: string) => {
-  const textarea = document.querySelector('.markdown-textarea') as HTMLTextAreaElement
-  if (!textarea) return
-  
-  const start = textarea.selectionStart
-  const end = textarea.selectionEnd
-  const selected = article.markdown.substring(start, end)
-  
-  article.markdown = 
-    article.markdown.substring(0, start) +
-    syntax +
-    selected +
-    article.markdown.substring(end)
-}
 
 const saveDraft = async () => {
   if (!article.title) {
@@ -102,6 +71,34 @@ const saveDraft = async () => {
     ElMessage.success('文章已保存为草稿')
   } finally {
     loading.value = false
+  }
+}
+
+const copyToWechat = async () => {
+  // md-editor-v3 uses class 'md-editor-preview' inside its root or wrapper
+  const preview = document.querySelector('.md-editor-preview-wrapper') || document.querySelector('.md-editor-preview');
+  if (!preview) {
+    ElMessage.error('找不到渲染区内容，如果页面空白请先写入 Markdown！');
+    return;
+  }
+  
+  try {
+    const htmlToCopy = preview.innerHTML;
+    // Use HTML Blob so that WeChat formatting is preserved accurately.
+    const blobHtml = new Blob([htmlToCopy], { type: 'text/html' });
+    const blobText = new Blob([preview.textContent || ''], { type: 'text/plain' });
+    
+    // @ts-ignore
+    const clipboardItem = new window.ClipboardItem({
+      'text/html': blobHtml,
+      'text/plain': blobText
+    });
+    
+    await navigator.clipboard.write([clipboardItem]);
+    ElMessage.success('🎉 样板 HTML 复制成功，快去公众号编辑器愉快地粘贴吧！');
+  } catch (err) {
+    console.error('Copy failed:', err);
+    ElMessage.error('复制失败，请重试或更换高版本现代浏览器');
   }
 }
 </script>
@@ -134,86 +131,19 @@ const saveDraft = async () => {
 }
 
 .editor-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  display: flex;
   flex: 1;
   min-height: 0;
-}
-
-.editor-pane, .preview-pane {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--color-border);
 }
 
-.editor-toolbar {
-  padding: 0.75rem;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-background);
+.md-editor-wrapper {
+  width: 100%;
+  height: 100%;
 }
 
-.markdown-textarea {
-  flex: 1;
-  padding: 1rem;
-  border: none;
-  background: var(--color-background);
-  color: var(--color-text-primary);
-  resize: none;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
-}
 
-.preview-header {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-background);
-  font-weight: bold;
-}
-
-.preview-content {
-  flex: 1;
-  padding: 1rem;
-  overflow-y: auto;
-}
-
-.preview-content :deep(h1),
-.preview-content :deep(h2),
-.preview-content :deep(h3) {
-  margin: 1rem 0 0.5rem 0;
-  font-weight: bold;
-}
-
-.preview-content :deep(h1) { font-size: 32px; }
-.preview-content :deep(h2) { font-size: 28px; }
-.preview-content :deep(h3) { font-size: 24px; }
-
-.preview-content :deep(p) {
-  margin: 0.5rem 0;
-  line-height: 1.6;
-}
-
-.preview-content :deep(code) {
-  background: #f5f5f5;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-}
-
-.preview-content :deep(pre) {
-  background: #f5f5f5;
-  padding: 1rem;
-  border-radius: 4px;
-  overflow-x: auto;
-  margin: 0.5rem 0;
-}
-
-@media (max-width: 1024px) {
-  .editor-container {
-    grid-template-columns: 1fr;
-  }
-}
 </style>

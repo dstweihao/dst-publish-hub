@@ -1,15 +1,18 @@
 <template>
-  <div id="app" :class="{ dark: isDarkMode }">
+  <div id="app">
     <router-view />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { onMounted } from 'vue'
 import { useThemeStore } from '@/stores/themeStore'
 
 const themeStore = useThemeStore()
-const isDarkMode = computed(() => themeStore.isDarkMode)
+
+onMounted(() => {
+  themeStore.applyTheme()
+})
 </script>
 
 <style scoped>

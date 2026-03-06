@@ -1,12 +1,13 @@
 package com.articlehub.entity;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "articles")
@@ -26,12 +27,19 @@ public class Article {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false)
-    private String author;
+    private String description;
+    private String theme;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     private String category;
 
-    private String tags;
+    @ElementCollection
+    @CollectionTable(name = "article_tags", joinColumns = @JoinColumn(name = "article_id"))
+    @Column(name = "tag")
+    private Set<String> tags;
 
     @Column(nullable = false)
     private String status;

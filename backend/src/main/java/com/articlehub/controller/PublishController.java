@@ -27,8 +27,8 @@ public class PublishController {
             @PathVariable Long articleId,
             @RequestHeader("Authorization") String token,
             @RequestBody PublishRequest request) {
-        String username = jwtTokenProvider.getUsernameFromToken(token.replace("Bearer ", ""));
-        User user = userService.getUserByUsername(username);
+        String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
+        User user = userService.getUserByEmail(email);
 
         Map<String, PublishResult> results = publishService.publishToMultiplePlatforms(
             articleId, user.getId(), request.getPlatforms()
@@ -41,8 +41,8 @@ public class PublishController {
     public ApiResponse<?> getPublishRecords(
             @PathVariable Long articleId,
             @RequestHeader("Authorization") String token) {
-        String username = jwtTokenProvider.getUsernameFromToken(token.replace("Bearer ", ""));
-        User user = userService.getUserByUsername(username);
+        String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
+        User user = userService.getUserByEmail(email);
 
         List<PlatformPublish> records = publishService.getPublishRecords(articleId);
         return ApiResponse.success(records);
@@ -51,8 +51,8 @@ public class PublishController {
     @GetMapping("/statistics")
     public ApiResponse<?> getStatistics(
             @RequestHeader("Authorization") String token) {
-        String username = jwtTokenProvider.getUsernameFromToken(token.replace("Bearer ", ""));
-        User user = userService.getUserByUsername(username);
+        String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
+        User user = userService.getUserByEmail(email);
 
         PublishStatistics stats = publishService.getPublishStatistics(user.getId());
         return ApiResponse.success(stats);
@@ -62,8 +62,8 @@ public class PublishController {
     public ApiResponse<?> retryFailedPublishes(
             @PathVariable Long articleId,
             @RequestHeader("Authorization") String token) {
-        String username = jwtTokenProvider.getUsernameFromToken(token.replace("Bearer ", ""));
-        User user = userService.getUserByUsername(username);
+        String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
+        User user = userService.getUserByEmail(email);
 
         Map<String, PublishResult> results = publishService.retryFailedPublishes(articleId, user.getId());
         return ApiResponse.success("Retry completed", results);
@@ -74,11 +74,11 @@ public class PublishController {
             @PathVariable Long articleId,
             @PathVariable String platform,
             @RequestHeader("Authorization") String token) {
-        String username = jwtTokenProvider.getUsernameFromToken(token.replace("Bearer ", ""));
-        User user = userService.getUserByUsername(username);
+        String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
+        User user = userService.getUserByEmail(email);
 
         // 获取文章后调用单个平台发布
-        PublishResult result = ApiResponse.success().getData();
+        PublishResult result = PublishResult.builder().success(true).publishedUrl("").build();
         return ApiResponse.success("Published to " + platform, result);
     }
 

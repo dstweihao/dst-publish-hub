@@ -33,6 +33,59 @@
         </el-table-column>
       </el-table>
     </el-card>
+
+    <!-- 发布对话框 -->
+    <el-dialog v-model="publishDialogVisible" title="一键群发至各大平台" width="500px">
+      <div class="publish-dialog-content" v-loading="loadingPlatforms">
+        <p class="dialog-tip">请选择您要分发的目标平台（仅显示已连接的平台）：</p>
+        
+        <el-checkbox-group v-if="connectedPlatforms.length > 0" v-model="selectedPlatforms">
+          <div class="platform-checkbox-list">
+            <el-checkbox v-for="p in connectedPlatforms" :key="p.name" :label="p.name">
+              <span class="platform-label">{{ p.name }}</span>
+            </el-checkbox>
+          </div>
+        </el-checkbox-group>
+        
+        <div v-else class="no-platforms">
+          <el-empty description="暂无已连接的平台">
+            <el-button type="primary" @click="$router.push('/platforms')">去配置平台</el-button>
+          </el-empty>
+        </div>
+      </div>
+      
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="publishDialogVisible = false">取消</el-button>
+          <el-button type="success" :disabled="selectedPlatforms.length === 0" 
+            :loading="publishing" @click="confirmPublish">
+            同步发布
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 发布结果反馈 -->
+    <el-dialog v-model="resultDialogVisible" title="发布结果反馈" width="600px">
+      <el-table :data="publishResults">
+        <el-table-column prop="platform" label="平台" width="120" />
+        <el-table-column prop="success" label="状态" width="100">
+          <template #default="{ row }">
+            <el-tag :type="row.success ? 'success' : 'danger'">
+              {{ row.success ? '成功' : '失败' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="publishedUrl" label="链接/错误信息">
+          <template #default="{ row }">
+            <el-link v-if="row.success" :href="row.publishedUrl" target="_blank" type="primary">
+              查看文章
+            </el-link>
+            <span v-else class="error-msg">{{ row.errorMessage }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -41,6 +94,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useArticleStore } from '@/stores/articleStore'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import api from '@/utils/api'
 
 const articleStore = useArticleStore()
 const router = useRouter()
@@ -66,15 +120,65 @@ const editArticle = (article: any) => {
   router.push('/editor')
 }
 
-const publishArticle = (article: any) => {
-  ElMessageBox.confirm(
-    '确定要发布该文章吗？',
-    '提示',
-    { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' }
-  ).then(() => {
-    articleStore.updateArticle(article.id, { status: 'published' })
-    ElMessage.success('文章已发布')
-  })
+const publishDialogVisible = ref(false)
+const resultDialogVisible = ref(false)
+const loadingPlatforms = ref(false)
+const publishing = ref(false)
+const connectedPlatforms = ref<any[]>([])
+const selectedPlatforms = ref<string[]>([])
+const currentPublishArticleId = ref<any>(null)
+const publishResults = ref<any[]>([])
+
+const publishArticle = async (article: any) => {
+  currentPublishArticleId.value = article.id
+  publishDialogVisible.value = true
+  selectedPlatforms.value = []
+  
+  loadingPlatforms.value = true
+  try {
+    const res = await api.get('/platforms')
+    const allPlatforms = [
+      { name: '微信公众号' }, { name: '稀土掘金' }, { name: '博客园' }, { name: '知乎' },
+      { name: 'CSDN' }, { name: '今日头条' }, { name: '简书' }, { name: 'Medium' },
+      { name: 'Hashnode' }, { name: 'Dev.to' }, { name: '开源中国' }, { name: '思否' },
+      { name: '百家号' }, { name: '小红书' }, { name: '豆瓣' }, { name: '微博' }
+    ]
+    
+    const connectedData = res.data || []
+    connectedPlatforms.value = allPlatforms.filter(p => 
+      connectedData.some((c: any) => c.platform === p.name)
+    )
+  } catch (err) {
+    console.error('Failed to fetch connected platforms', err)
+  } finally {
+    loadingPlatforms.value = false
+  }
+}
+
+const confirmPublish = async () => {
+  if (selectedPlatforms.value.length === 0) return
+  
+  publishing.value = true
+  try {
+    const res = await articleStore.publishToPlatforms(currentPublishArticleId.value, selectedPlatforms.value)
+    
+    // Process results from backend
+    const resultsMap = res.data || {}
+    publishResults.value = Object.keys(resultsMap).map(key => ({
+      platform: key,
+      ...resultsMap[key]
+    }))
+    
+    publishDialogVisible.value = false
+    resultDialogVisible.value = true
+    
+    // Refresh list to update status if needed
+    articleStore.fetchArticles()
+  } catch (err) {
+    console.error('Publishing failed', err)
+  } finally {
+    publishing.value = false
+  }
 }
 
 const deleteArticle = (article: any) => {
@@ -104,5 +208,35 @@ const deleteArticle = (article: any) => {
 
 .search-group {
   width: 300px;
+}
+
+.publish-dialog-content {
+  padding: 10px 0;
+}
+
+.dialog-tip {
+  margin-bottom: 20px;
+  color: var(--el-text-color-secondary);
+}
+
+.platform-checkbox-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+
+.platform-label {
+  font-size: 15px;
+}
+
+.error-msg {
+  color: var(--el-color-danger);
+  font-size: 12px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
 </style>

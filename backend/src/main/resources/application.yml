@@ -3,9 +3,9 @@ spring:
     name: article-publish-platform
 
   datasource:
-    url: jdbc:mysql://localhost:3306/article_publish_db?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/article_publish_db?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
     username: article_user
-    password: @@@123
+    password: article_password_123
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -20,9 +20,9 @@ spring:
     time-zone: UTC
     serialization:
       write-dates-as-timestamps: false
-jwt:
-  secret: your-secret-key-change-this-in-production-min-32-chars
-  expiration: 86400000
+app:
+  jwtSecret: your-secret-key-change-this-in-production-min-32-chars
+  jwtExpirationInMs: 86400000
 
 server:
   port: 8080

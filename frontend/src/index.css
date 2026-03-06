@@ -1,0 +1,312 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* 基础品牌色 */
+  --color-primary: #409eff;
+  --color-primary-light: #66b1ff;
+  --color-success: #67c23a;
+  --color-warning: #e6a23c;
+  --color-danger: #f56c6c;
+  --color-info: #909399;
+
+  /* 背景体系 */
+  --color-background: #f5f7fa;
+  --color-bg-card: #ffffff;
+  --color-bg-header: #ffffff;
+  --color-bg-sidebar: #ffffff;
+
+  /* 文字体系 */
+  --color-text-primary: #303133;
+  --color-text-regular: #606266;
+  --color-text-secondary: #909399;
+  --color-text-placeholder: #a8abb2;
+
+  /* 边框体系 */
+  --color-border: #dcdfe6;
+  --color-border-light: #e4e7ed;
+  
+  /* 阴影 */
+  --shadow-main: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+html.dark {
+  /* 深色模式下的背景体系 */
+  --color-background: #141414; /* 稍微提升亮度，避免纯黑导致对比度过大 */
+  --color-bg-card: #1d1e1f;
+  --color-bg-header: #1d1e1f;
+  --color-bg-sidebar: #1d1e1f;
+
+  /* 深色模式下的文字体系 */
+  --color-text-primary: #ffffff; /* 强制白色，提高对比度 */
+  --color-text-regular: #cfd3dc;
+  --color-text-secondary: #a3a6ad;
+  --color-text-placeholder: #8d9095;
+
+  /* 深色模式下的边框体系 */
+  --color-border: #4c4d4f;
+  --color-border-light: #363637;
+  
+  /* 深色模式下的阴影 */
+  --shadow-main: 0 4px 20px rgba(0, 0, 0, 0.3);
+
+  /* Element Plus 深色覆盖 - 核心修复 */
+  --el-bg-color: var(--color-background);
+  --el-bg-color-page: var(--color-background);
+  --el-bg-color-overlay: var(--color-bg-card);
+  --el-fill-color-blank: var(--color-bg-card); /* 修复 Table, Input 等内部背景 */
+  --el-text-color-primary: var(--color-text-primary);
+  --el-text-color-regular: var(--color-text-regular);
+  --el-border-color: var(--color-border);
+  --el-border-color-light: var(--color-border-light);
+  
+  /* 表格专项修复 */
+  --el-table-border-color: var(--color-border);
+  --el-table-header-bg-color: var(--color-bg-card);
+  --el-table-tr-bg-color: var(--color-bg-card);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
+
+/* Markdown 编辑器样式 */
+.markdown-editor {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  height: 100%;
+}
+
+.editor-pane, .preview-pane {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--color-bg-card);
+  transition: all 0.3s;
+}
+
+.editor-pane textarea {
+  flex: 1;
+  padding: 1.5rem;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  resize: none;
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.preview-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  color: var(--color-text-primary);
+}
+
+.preview-content h1 { font-size: 32px; margin: 1.5rem 0 0.75rem 0; font-weight: 800; border-bottom: 2px solid var(--color-border-light); padding-bottom: 0.5rem; }
+.preview-content h2 { font-size: 26px; margin: 1.2rem 0 0.6rem 0; font-weight: 700; }
+.preview-content h3 { font-size: 22px; margin: 1rem 0 0.5rem 0; font-weight: 600; }
+.preview-content p { margin: 1rem 0; line-height: 1.8; color: var(--color-text-regular); }
+.preview-content ul, .preview-content ol { margin: 1rem 0 1rem 2rem; }
+.preview-content li { margin: 0.5rem 0; color: var(--color-text-regular); }
+.preview-content code {
+  background: var(--color-background);
+  color: var(--color-primary);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9em;
+}
+.preview-content pre {
+  background: var(--color-background);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-light);
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+.preview-content blockquote {
+  border-left: 4px solid var(--color-primary);
+  background: var(--color-background);
+  padding: 1rem 1.5rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1.5rem 0;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+.preview-content a { color: var(--color-primary); text-decoration: underline; text-underline-offset: 4px; }
+.preview-content table { border-collapse: collapse; width: 100%; margin: 1.5rem 0; border-radius: 8px; overflow: hidden; }
+.preview-content th, .preview-content td { border: 1px solid var(--color-border-light); padding: 1rem; text-align: left; }
+.preview-content th { background: var(--color-background); font-weight: bold; color: var(--color-text-primary); }
+
+/* 主题选择器 */
+.theme-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.theme-item {
+  padding: 1rem;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.theme-item:hover {
+  border-color: var(--color-primary);
+}
+
+.theme-item.active {
+  border-color: var(--color-primary);
+  background: rgba(64, 158, 255, 0.1);
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+  .markdown-editor {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Global Aesthetics & Overrides */
+:root {
+  --el-color-primary: var(--color-primary);
+  --el-color-success: var(--color-success);
+  --el-color-warning: var(--color-warning);
+  --el-color-danger: var(--color-danger);
+  --el-border-radius-base: 12px;
+  --el-text-color-primary: var(--color-text-primary);
+  --el-bg-color: var(--color-background);
+}
+
+body {
+  font-family: 'Outfit', 'Inter', -apple-system, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+/* Premium Element Plus Overrides */
+.el-card {
+  border: 1px solid var(--color-border-light);
+  border-radius: 16px;
+  background: var(--color-bg-card);
+  box-shadow: var(--shadow-main);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.el-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+html.dark .el-card:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+}
+
+.el-button {
+  border-radius: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.el-input__wrapper, .el-textarea__inner {
+  background-color: var(--color-background) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 10px !important;
+  transition: all 0.3s ease !important;
+}
+
+.el-input__wrapper.is-focus, .el-textarea__inner:focus {
+  box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2) !important;
+  border-color: var(--color-primary) !important;
+}
+
+/* Layout Specific Fixes */
+.sidebar, .header {
+  background-color: var(--color-bg-sidebar) !important;
+  border-color: var(--color-border-light) !important;
+}
+
+.nav-item {
+  border-radius: 10px;
+  margin: 4px 12px;
+  color: var(--color-text-regular) !important;
+}
+
+.nav-item:hover {
+  background: var(--color-border-light) !important;
+  color: var(--color-primary) !important;
+}
+
+.nav-item.active {
+  background: rgba(64, 158, 255, 0.1) !important;
+  color: var(--color-primary) !important;
+  font-weight: 700;
+}
+
+html.dark .nav-item.active {
+  background: rgba(64, 158, 255, 0.15) !important;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-placeholder);
+  border-radius: 4px;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}
+
+/* Page Layout Animations */
+.content {
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}

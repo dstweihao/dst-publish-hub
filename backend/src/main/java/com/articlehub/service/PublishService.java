@@ -1,6 +1,6 @@
 package com.articlehub.service;
-
 import com.articlehub.dto.ArticleDTO;
+import com.articlehub.dto.PublishStatistics;
 import com.articlehub.entity.Article;
 import com.articlehub.entity.PlatformAccount;
 import com.articlehub.entity.PlatformPublish;
@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -90,7 +89,7 @@ public class PublishService {
             .orElseThrow(() -> new RuntimeException("Platform account not found for: " + platform));
 
         // 检查账号是否激活
-        if (!platformAccount.getIsActive()) {
+        if (!platformAccount.isActive()) {
             throw new RuntimeException("Platform account is not active");
         }
 
@@ -118,7 +117,7 @@ public class PublishService {
             .platformAccount(platformAccount)
             .platform(platform)
             .status(result.isSuccess() ? "published" : "failed")
-            .publishedUrl(result.getPublishedUrl())
+            .platformUrl(result.getPublishedUrl())
             .errorMessage(result.getErrorMessage())
             .publishedAt(result.isSuccess() ? LocalDateTime.now() : null)
             .build();
@@ -151,9 +150,6 @@ public class PublishService {
             .totalArticles(totalArticles)
             .publishedArticles(publishedArticles)
             .totalPublishes(totalPublishes)
-            .successRate(totalPublishes > 0 ? 
-                (float) platformPublishRepository.countByArticleUserAndStatus(user, "published") / 
-                (float) platformPublishRepository.countByArticleUser(user) * 100 : 0)
             .build();
     }
 

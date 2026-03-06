@@ -10,7 +10,13 @@
           <el-icon v-else><Sunny /></el-icon>
         </el-button>
         <el-dropdown>
-          <el-avatar :src="authStore.user?.avatar" size="small" />
+          <div class="user-avatar-wrapper">
+            <el-avatar 
+              :src="authStore.user?.avatar || `https://api.dicebear.com/7.x/adventurer-neutral/svg?seed=${authStore.user?.username || 'user'}&backgroundColor=eef2ff,c7d2fe`" 
+              size="small" 
+            />
+            <span class="username-display">{{ authStore.user?.username }}</span>
+          </div>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="navigateTo('settings')">设置</el-dropdown-item>
@@ -48,7 +54,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useThemeStore } from '@/stores/themeStore'
 import { useAuthStore } from '@/stores/authStore'
-import { DocumentCopy, Edit, List, Setting, Share } from '@element-plus/icons-vue'
+import { DocumentCopy, Edit, List, Setting, Share, Moon, Sunny } from '@element-plus/icons-vue'
 
 const themeStore = useThemeStore()
 const authStore = useAuthStore()
@@ -105,8 +111,27 @@ const handleLogout = () => {
 
 .header-right {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   align-items: center;
+}
+
+.user-avatar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 20px;
+  transition: background-color 0.2s;
+}
+
+.user-avatar-wrapper:hover {
+  background-color: var(--color-border);
+}
+
+.username-display {
+  font-weight: 500;
+  font-size: 14px;
 }
 
 .layout-container {
@@ -157,6 +182,8 @@ const handleLogout = () => {
   flex: 1;
   overflow-y: auto;
   padding: 2rem;
+  background-color: var(--color-background);
+  transition: background-color 0.3s ease;
 }
 
 @media (max-width: 768px) {

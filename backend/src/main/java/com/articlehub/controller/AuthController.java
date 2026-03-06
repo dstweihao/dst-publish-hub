@@ -72,8 +72,8 @@ public class AuthController {
 
     @GetMapping("/me")
     public ApiResponse<UserDTO> getCurrentUser(@RequestHeader("Authorization") String token) {
-        String username = jwtTokenProvider.getUsernameFromToken(token.replace("Bearer ", ""));
-        User user = userService.getUserByUsername(username);
+        String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
+        User user = userService.getUserByEmail(email);
 
         UserDTO userDTO = UserDTO.builder()
             .id(user.getId())

@@ -24,8 +24,8 @@ public class ArticleController {
             @RequestHeader("Authorization") String token,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        String username = jwtTokenProvider.getUsernameFromToken(token.replace("Bearer ", ""));
-        User user = userService.getUserByUsername(username);
+        String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
+        User user = userService.getUserByEmail(email);
         Page<Article> articles = articleService.getUserArticles(user.getId(), page, size);
         return ApiResponse.success(articles);
     }
@@ -41,8 +41,8 @@ public class ArticleController {
     public ApiResponse<ArticleDTO> createArticle(
             @RequestHeader("Authorization") String token,
             @RequestBody ArticleDTO articleDTO) {
-        String username = jwtTokenProvider.getUsernameFromToken(token.replace("Bearer ", ""));
-        User user = userService.getUserByUsername(username);
+        String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
+        User user = userService.getUserByEmail(email);
         Article article = articleService.createArticle(user.getId(), articleDTO);
         return ApiResponse.success("Article created successfully", convertToDTO(article));
     }
@@ -52,8 +52,8 @@ public class ArticleController {
             @PathVariable Long id,
             @RequestHeader("Authorization") String token,
             @RequestBody ArticleDTO articleDTO) {
-        String username = jwtTokenProvider.getUsernameFromToken(token.replace("Bearer ", ""));
-        User user = userService.getUserByUsername(username);
+        String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
+        User user = userService.getUserByEmail(email);
         Article article = articleService.updateArticle(id, user.getId(), articleDTO);
         return ApiResponse.success("Article updated successfully", convertToDTO(article));
     }
@@ -62,8 +62,8 @@ public class ArticleController {
     public ApiResponse<?> deleteArticle(
             @PathVariable Long id,
             @RequestHeader("Authorization") String token) {
-        String username = jwtTokenProvider.getUsernameFromToken(token.replace("Bearer ", ""));
-        User user = userService.getUserByUsername(username);
+        String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
+        User user = userService.getUserByEmail(email);
         articleService.deleteArticle(id, user.getId());
         return ApiResponse.success("Article deleted successfully");
     }
@@ -73,8 +73,8 @@ public class ArticleController {
             @PathVariable Long id,
             @RequestHeader("Authorization") String token,
             @RequestBody(required = false) PublishRequest request) {
-        String username = jwtTokenProvider.getUsernameFromToken(token.replace("Bearer ", ""));
-        User user = userService.getUserByUsername(username);
+        String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
+        User user = userService.getUserByEmail(email);
         Article article = articleService.publishArticle(id, user.getId());
         // TODO: 调用平台发布服务
         return ApiResponse.success("Article published successfully", convertToDTO(article));

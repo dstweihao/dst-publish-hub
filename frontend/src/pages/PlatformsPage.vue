@@ -36,18 +36,21 @@
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="saveAccount">保存</el-button>
+        <el-button type="primary" @click="saveAccount" :loading="submitting">保存</el-button>
       </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import api from '@/utils/api'
 
 const dialogVisible = ref(false)
 const selectedPlatform = ref<any>(null)
+const loading = ref(false)
+const submitting = ref(false)
 const accountForm = reactive({
   accountName: '',
   token: ''
@@ -72,6 +75,33 @@ const platforms = ref([
   { id: 16, name: '微博', description: '社交媒体', connected: false }
 ])
 
+const fetchPlatforms = async () => {
+  loading.value = true
+  try {
+    const res = await api.get('/platforms')
+    const connectedList = res.data || []
+    
+    // Reset all
+    platforms.value.forEach(p => p.connected = false)
+    
+    // Mark connected
+    for (const connected of connectedList) {
+      const match = platforms.value.find(p => p.name === connected.platform)
+      if (match) {
+        match.connected = true
+      }
+    }
+  } catch (err: any) {
+    console.error('Failed to fetch platforms', err)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchPlatforms()
+})
+
 const connectPlatform = (platform: any) => {
   selectedPlatform.value = platform
   accountForm.accountName = ''
@@ -79,23 +109,40 @@ const connectPlatform = (platform: any) => {
   dialogVisible.value = true
 }
 
-const disconnectPlatform = (platform: any) => {
-  platform.connected = false
-  ElMessage.success(`${platform.name} 已断开连接`)
+const disconnectPlatform = async (platform: any) => {
+  try {
+    await api.delete(`/platforms/${platform.name}`)
+    platform.connected = false
+    ElMessage.success(`${platform.name} 已断开连接`)
+  } catch (err: any) {
+    console.error('Failed to disconnect platform', err)
+  }
 }
 
-const saveAccount = () => {
+const saveAccount = async () => {
   if (!accountForm.accountName || !accountForm.token) {
     ElMessage.error('请填写所有字段')
     return
   }
   
   if (selectedPlatform.value) {
-    selectedPlatform.value.connected = true
-    ElMessage.success(`${selectedPlatform.value.name} 已连接`)
+    submitting.value = true
+    try {
+      await api.post('/platforms', {
+        platform: selectedPlatform.value.name,
+        username: accountForm.accountName,
+        accessToken: accountForm.token
+      })
+      
+      selectedPlatform.value.connected = true
+      ElMessage.success(`${selectedPlatform.value.name} 已成功连接`)
+      dialogVisible.value = false
+    } catch (err: any) {
+      console.error('Failed to connect platform', err)
+    } finally {
+      submitting.value = false
+    }
   }
-  
-  dialogVisible.value = false
 }
 </script>
 

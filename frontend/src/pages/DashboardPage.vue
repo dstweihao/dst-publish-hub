@@ -40,7 +40,7 @@
               <span>连接平台</span>
             </div>
           </template>
-          <div class="stat-number">16</div>
+          <div class="stat-number">{{ articleStore.connectedPlatformsCount }}</div>
         </el-card>
       </el-col>
     </el-row>
@@ -68,6 +68,7 @@ const articleStore = useArticleStore()
 
 onMounted(() => {
   articleStore.fetchArticles()
+  articleStore.fetchPlatformAccountsCount()
 })
 </script>
 

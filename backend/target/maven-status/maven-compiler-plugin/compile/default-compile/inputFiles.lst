@@ -3,11 +3,16 @@
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/config/UserDetailsServiceImpl.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/controller/ArticleController.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/controller/AuthController.java
+/Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/controller/PlatformAccountController.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/controller/PublishController.java
+/Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/controller/UserController.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/dto/ApiResponse.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/dto/ArticleDTO.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/dto/AuthRequest.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/dto/AuthResponse.java
+/Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/dto/PasswordUpdateRequest.java
+/Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/dto/PlatformAccountDTO.java
+/Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/dto/PlatformAccountRequest.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/dto/PlatformPublishDTO.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/dto/PublishStatistics.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/dto/UserDTO.java
@@ -32,6 +37,7 @@
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/platform/impl/WeiboPublisher.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/platform/impl/XiaohongshuPublisher.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/repository/ArticleRepository.java
+/Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/repository/ArticleRepositoryExtension.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/repository/PlatformAccountRepository.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/repository/PlatformPublishRepository.java
 /Users/haowei/Documents/Gitee/dst-publish-hub/backend/src/main/java/com/articlehub/repository/UserRepository.java

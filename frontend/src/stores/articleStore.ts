@@ -7,6 +7,7 @@ export const useArticleStore = defineStore('article', () => {
   const articles = ref<Article[]>([])
   const currentArticle = ref<Article | null>(null)
   const loading = ref(false)
+  const connectedPlatformsCount = ref(0)
 
   const articlesCount = computed(() => articles.value.length)
   const draftArticles = computed(() => articles.value.filter(a => a.status === 'draft'))
@@ -16,7 +17,16 @@ export const useArticleStore = defineStore('article', () => {
     loading.value = true
     try {
       const response = await api.get('/articles')
-      articles.value = response.data
+      if (response.data && Array.isArray(response.data.content)) {
+        articles.value = response.data.content
+      } else if (Array.isArray(response.data)) {
+        articles.value = response.data
+      } else {
+        articles.value = []
+      }
+    } catch (error) {
+      console.error('Failed to fetch articles:', error)
+      articles.value = []
     } finally {
       loading.value = false
     }
@@ -52,10 +62,35 @@ export const useArticleStore = defineStore('article', () => {
     articles.value = articles.value.filter(a => a.id !== id)
   }
 
+  const publishToPlatforms = async (articleId: number | string, platformNames: string[]) => {
+    loading.value = true
+    try {
+      // Endpoint is /api/publish/article/{articleId}
+      // Note: baseURL is /api, so we use /publish/article/
+      const response = await api.post(`/publish/article/${articleId}`, {
+        platforms: platformNames
+      })
+      return response.data
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const fetchPlatformAccountsCount = async () => {
+    try {
+      const response = await api.get('/platforms')
+      const platforms = response.data || []
+      connectedPlatformsCount.value = platforms.length
+    } catch (err) {
+      console.error('Failed to fetch platforms count', err)
+    }
+  }
+
   return {
     articles,
     currentArticle,
     loading,
+    connectedPlatformsCount,
     articlesCount,
     draftArticles,
     publishedArticles,
@@ -63,6 +98,8 @@ export const useArticleStore = defineStore('article', () => {
     fetchArticle,
     createArticle,
     updateArticle,
-    deleteArticle
+    deleteArticle,
+    publishToPlatforms,
+    fetchPlatformAccountsCount
   }
 })

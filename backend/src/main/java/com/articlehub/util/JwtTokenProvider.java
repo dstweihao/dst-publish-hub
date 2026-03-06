@@ -1,62 +1,75 @@
 package com.articlehub.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-    @Value("${jwt.secret}")
+
+    @Value("${app.jwtSecret}")
     private String jwtSecret;
 
-    @Value("${jwt.expiration}")
-    private long jwtExpiration;
-
-    public String generateToken(Authentication authentication) {
-        String username = authentication.getName();
-        return generateToken(username);
-    }
+    @Value("${app.jwtExpirationInMs}")
+    private int jwtExpirationInMs;
 
     public String generateToken(String username) {
-        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + jwtExpiration);
+        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-            .setSubject(username)
-            .setIssuedAt(now)
-            .setExpiration(expiryDate)
-            .signWith(key, SignatureAlgorithm.HS512)
-            .compact();
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(expiryDate)
+                .signWith(io.jsonwebtoken.security.Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+                .compact();
     }
 
-    public String getUsernameFromToken(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-        Claims claims = Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
+    public String generateToken(Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+
+        return Jwts.builder()
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date())
+                .expiration(expiryDate)
+                .signWith(io.jsonwebtoken.security.Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+                .compact();
+    }
+
+    public String getUsernameFromJWT(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(io.jsonwebtoken.security.Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
         return claims.getSubject();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateToken(String authToken) {
         try {
-            SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-            Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token);
+            Jwts.parser()
+                 .verifyWith(io.jsonwebtoken.security.Keys.hmacShaKeyFor(jwtSecret.getBytes()))
+                 .build()
+                 .parseSignedClaims(authToken);
             return true;
-        } catch (Exception ex) {
-            return false;
+        } catch (SignatureException ex) {
+            // Invalid JWT signature
+        } catch (MalformedJwtException ex) {
+            // Invalid JWT token
+        } catch (ExpiredJwtException ex) {
+            // Expired JWT token
+        } catch (UnsupportedJwtException ex) {
+            // Unsupported JWT token
+        } catch (IllegalArgumentException ex) {
+            // JWT claims string is empty
         }
+        return false;
     }
 }
