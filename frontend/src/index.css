@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  /* 基础品牌色 */
+  /* 基础品牌色 (由 themeStore 控制默认值，也可在此预设) */
   --color-primary: #409eff;
   --color-primary-light: #66b1ff;
   --color-success: #67c23a;
@@ -11,13 +11,13 @@
   --color-danger: #f56c6c;
   --color-info: #909399;
 
-  /* 背景体系 */
+  /* 背景体系 - 浅色模式默认值 */
   --color-background: #f5f7fa;
   --color-bg-card: #ffffff;
   --color-bg-header: #ffffff;
   --color-bg-sidebar: #ffffff;
 
-  /* 文字体系 */
+  /* 文字体系 - 浅色模式默认值 */
   --color-text-primary: #303133;
   --color-text-regular: #606266;
   --color-text-secondary: #909399;
@@ -32,39 +32,71 @@
 }
 
 html.dark {
-  /* 深色模式下的背景体系 */
-  --color-background: #141414; /* 稍微提升亮度，避免纯黑导致对比度过大 */
-  --color-bg-card: #1d1e1f;
-  --color-bg-header: #1d1e1f;
-  --color-bg-sidebar: #1d1e1f;
+  /* 深色模式下的背景体系 - 进一步加深以减少刺眼感 */
+  --color-background: #0f0f0f;
+  --color-bg-card: #1a1a1a;
+  --color-bg-header: #1a1a1a;
+  --color-bg-sidebar: #1a1a1a;
 
   /* 深色模式下的文字体系 */
-  --color-text-primary: #ffffff; /* 强制白色，提高对比度 */
+  --color-text-primary: #e5eaf3;
   --color-text-regular: #cfd3dc;
   --color-text-secondary: #a3a6ad;
-  --color-text-placeholder: #8d9095;
+  --color-text-placeholder: #606266;
 
   /* 深色模式下的边框体系 */
-  --color-border: #4c4d4f;
-  --color-border-light: #363637;
+  --color-border: #333333;
+  --color-border-light: #262626;
   
   /* 深色模式下的阴影 */
-  --shadow-main: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-main: 0 8px 30px rgba(0, 0, 0, 0.5);
 
-  /* Element Plus 深色覆盖 - 核心修复 */
+  /* Element Plus 全方位深色劫持 */
   --el-bg-color: var(--color-background);
   --el-bg-color-page: var(--color-background);
   --el-bg-color-overlay: var(--color-bg-card);
-  --el-fill-color-blank: var(--color-bg-card); /* 修复 Table, Input 等内部背景 */
+  
+  --el-fill-color-blank: var(--color-bg-card);
+  --el-fill-color: #262626;
+  --el-fill-color-light: #1f1f1f;
+  --el-fill-color-lighter: #1a1a1a;
+  --el-fill-color-extra-light: #141414;
+  
   --el-text-color-primary: var(--color-text-primary);
   --el-text-color-regular: var(--color-text-regular);
+  --el-text-color-secondary: var(--color-text-secondary);
+  --el-text-color-placeholder: var(--color-text-placeholder);
+  
   --el-border-color: var(--color-border);
   --el-border-color-light: var(--color-border-light);
+  --el-border-color-lighter: #1f1f1f;
   
-  /* 表格专项修复 */
-  --el-table-border-color: var(--color-border);
-  --el-table-header-bg-color: var(--color-bg-card);
+  --el-mask-color: rgba(0, 0, 0, 0.8);
+  
+  /* 表格与输入组件专项 */
+  --el-table-header-bg-color: #141414;
   --el-table-tr-bg-color: var(--color-bg-card);
+  --el-table-border-color: var(--color-border);
+  --el-input-bg-color: var(--color-bg-card);
+  --el-select-input-focus-border-color: var(--color-primary);
+}
+
+/* 全局深色模式下的强力补丁 */
+html.dark .el-card__header {
+  border-bottom: 1px solid var(--color-border-light);
+  background-color: var(--color-bg-card);
+}
+
+html.dark .el-empty__description p {
+  color: var(--color-text-secondary);
+}
+
+html.dark .el-dialog {
+  background-color: var(--color-bg-card) !important;
+}
+
+html.dark .el-dialog__header, html.dark .el-dialog__footer {
+  background-color: var(--color-bg-card);
 }
 
 * {

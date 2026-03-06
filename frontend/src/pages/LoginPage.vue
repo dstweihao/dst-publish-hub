@@ -73,12 +73,19 @@ const handleLogin = async () => {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   padding: 3rem;
-  border-radius: 16px;
+  border-radius: 24px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 420px;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+:host-context(html.dark) .login-box,
+html.dark .login-box {
+  background: rgba(20, 20, 20, 0.75);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
 }
 
 .login-box:hover {
@@ -93,11 +100,19 @@ const handleLogin = async () => {
   letter-spacing: -0.5px;
 }
 
+html.dark .login-box h1 {
+  color: #ffffff;
+}
+
 .subtitle {
   text-align: center;
   color: #4b5563;
   margin-bottom: 2.5rem;
   font-size: 1.1rem;
+}
+
+html.dark .subtitle {
+  color: #a3a6ad;
 }
 
 .el-button {
@@ -122,6 +137,10 @@ const handleLogin = async () => {
   margin-top: 2rem;
   color: #4b5563;
   font-size: 0.95rem;
+}
+
+html.dark .login-footer {
+  color: #a3a6ad;
 }
 
 .login-footer a {

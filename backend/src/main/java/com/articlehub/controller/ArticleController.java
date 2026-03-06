@@ -6,10 +6,12 @@ import com.articlehub.entity.Article;
 import com.articlehub.entity.User;
 import com.articlehub.service.ArticleService;
 import com.articlehub.service.UserService;
+import com.articlehub.service.PublishService;
 import com.articlehub.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/articles")
@@ -18,6 +20,7 @@ public class ArticleController {
     private final ArticleService articleService;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PublishService publishService;
 
     @GetMapping
     public ApiResponse<?> getArticles(
@@ -69,15 +72,19 @@ public class ArticleController {
     }
 
     @PostMapping("/{id}/publish")
-    public ApiResponse<ArticleDTO> publishArticle(
+    public ApiResponse<?> publishArticle(
             @PathVariable Long id,
             @RequestHeader("Authorization") String token,
-            @RequestBody(required = false) PublishRequest request) {
+            @RequestBody PublishRequest request) {
         String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
         User user = userService.getUserByEmail(email);
-        Article article = articleService.publishArticle(id, user.getId());
-        // TODO: 调用平台发布服务
-        return ApiResponse.success("Article published successfully", convertToDTO(article));
+        
+        // 1. 调用已有的发布服务
+        Map<String, com.articlehub.platform.PublishResult> results = publishService.publishToMultiplePlatforms(
+            id, user.getId(), request.platforms
+        );
+        
+        return ApiResponse.success("Article publishing initiated", results);
     }
 
     private ArticleDTO convertToDTO(Article article) {

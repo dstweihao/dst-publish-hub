@@ -42,7 +42,12 @@
         <el-checkbox-group v-if="connectedPlatforms.length > 0" v-model="selectedPlatforms">
           <div class="platform-checkbox-list">
             <el-checkbox v-for="p in connectedPlatforms" :key="p.name" :label="p.name">
-              <span class="platform-label">{{ p.name }}</span>
+              <div class="platform-checkbox-label">
+                <el-icon :style="{ color: p.color }" class="platform-icon-mini">
+                  <component :is="p.icon" />
+                </el-icon>
+                <span>{{ p.name }}</span>
+              </div>
             </el-checkbox>
           </div>
         </el-checkbox-group>
@@ -68,7 +73,16 @@
     <!-- 发布结果反馈 -->
     <el-dialog v-model="resultDialogVisible" title="发布结果反馈" width="600px">
       <el-table :data="publishResults">
-        <el-table-column prop="platform" label="平台" width="120" />
+        <el-table-column prop="platform" label="平台" width="160">
+          <template #default="{ row }">
+            <div class="platform-result-info">
+              <el-icon :style="{ color: row.color }" class="platform-icon-mini">
+                <component :is="row.icon" />
+              </el-icon>
+              <span>{{ row.platform }}</span>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column prop="success" label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="row.success ? 'success' : 'danger'">
@@ -95,6 +109,7 @@ import { useArticleStore } from '@/stores/articleStore'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import api from '@/utils/api'
+import { SUPPORTED_PLATFORMS } from '@/config/platforms'
 
 const articleStore = useArticleStore()
 const router = useRouter()
@@ -102,7 +117,7 @@ const searchText = ref('')
 
 const filteredArticles = computed(() => {
   if (!searchText.value) return articleStore.articles
-  return articleStore.articles.filter(a => 
+  return articleStore.articles.filter((a: any) => 
     a.title.includes(searchText.value)
   )
 })
@@ -137,15 +152,10 @@ const publishArticle = async (article: any) => {
   loadingPlatforms.value = true
   try {
     const res = await api.get('/platforms')
-    const allPlatforms = [
-      { name: '微信公众号' }, { name: '稀土掘金' }, { name: '博客园' }, { name: '知乎' },
-      { name: 'CSDN' }, { name: '今日头条' }, { name: '简书' }, { name: 'Medium' },
-      { name: 'Hashnode' }, { name: 'Dev.to' }, { name: '开源中国' }, { name: '思否' },
-      { name: '百家号' }, { name: '小红书' }, { name: '豆瓣' }, { name: '微博' }
-    ]
-    
     const connectedData = res.data || []
-    connectedPlatforms.value = allPlatforms.filter(p => 
+    
+    // 匹配已连接的平台并丰富元数据
+    connectedPlatforms.value = SUPPORTED_PLATFORMS.filter(p => 
       connectedData.some((c: any) => c.platform === p.name)
     )
   } catch (err) {
@@ -163,11 +173,16 @@ const confirmPublish = async () => {
     const res = await articleStore.publishToPlatforms(currentPublishArticleId.value, selectedPlatforms.value)
     
     // Process results from backend
-    const resultsMap = res.data || {}
-    publishResults.value = Object.keys(resultsMap).map(key => ({
-      platform: key,
-      ...resultsMap[key]
-    }))
+    const resultsMap = res || {}
+    publishResults.value = Object.keys(resultsMap).map(key => {
+      const config = SUPPORTED_PLATFORMS.find(p => p.name === key);
+      return {
+        platform: key,
+        icon: config?.icon || 'document',
+        color: config?.color || '#909399',
+        ...resultsMap[key]
+      }
+    })
     
     publishDialogVisible.value = false
     resultDialogVisible.value = true
@@ -225,8 +240,21 @@ const deleteArticle = (article: any) => {
   gap: 15px;
 }
 
-.platform-label {
-  font-size: 15px;
+.platform-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.platform-icon-mini {
+  font-size: 18px;
+}
+
+.platform-result-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
 }
 
 .error-msg {

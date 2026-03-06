@@ -13,6 +13,7 @@ import java.util.List;
 public interface PlatformPublishRepository extends JpaRepository<PlatformPublish, Long> {
     List<PlatformPublish> findByArticleId(Long articleId);
     List<PlatformPublish> findByArticleIdAndStatus(Long articleId, String status);
+    java.util.Optional<PlatformPublish> findByArticleIdAndPlatform(Long articleId, String platform);
 
     @Query("SELECT COUNT(p) FROM PlatformPublish p WHERE p.article.user = :user AND p.status = :status")
     long countByArticleUserAndStatus(User user, String status);

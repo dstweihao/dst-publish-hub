@@ -49,7 +49,7 @@ public class WechatPublisher implements PlatformPublisher {
 
     @Override
     public String getPlatformName() {
-        return "wechat";
+        return "微信公众号";
     }
 
     private String getWechatAccessToken(String credentials) throws IOException {

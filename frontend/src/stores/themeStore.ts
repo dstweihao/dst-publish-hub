@@ -16,15 +16,13 @@ export const useThemeStore = defineStore('theme', () => {
   const isDarkMode = ref(localStorage.getItem('darkMode') === 'true')
   const currentTheme = ref(localStorage.getItem('theme') || 'default')
 
-  const themes: Record<string, ThemeConfig> = {
+  const themes: Record<string, any> = {
     default: {
       name: '默认蓝',
       colors: {
         primary: '#409eff',
         secondary: '#67c23a',
-        accent: '#e6a23c',
-        background: '#ffffff',
-        text: '#303133'
+        accent: '#e6a23c'
       }
     },
     dark: {
@@ -32,9 +30,7 @@ export const useThemeStore = defineStore('theme', () => {
       colors: {
         primary: '#409eff',
         secondary: '#67c23a',
-        accent: '#e6a23c',
-        background: '#141414',
-        text: '#e4e7eb'
+        accent: '#e6a23c'
       }
     },
     academic: {
@@ -42,9 +38,7 @@ export const useThemeStore = defineStore('theme', () => {
       colors: {
         primary: '#1e3a8a',
         secondary: '#1e40af',
-        accent: '#3b82f6',
-        background: '#f8fafc',
-        text: '#0f172a'
+        accent: '#3b82f6'
       }
     },
     vibrant: {
@@ -52,9 +46,7 @@ export const useThemeStore = defineStore('theme', () => {
       colors: {
         primary: '#ff6b6b',
         secondary: '#4ecdc4',
-        accent: '#95e1d3',
-        background: '#fff5f7',
-        text: '#2d3436'
+        accent: '#95e1d3'
       }
     },
     forest: {
@@ -62,31 +54,38 @@ export const useThemeStore = defineStore('theme', () => {
       colors: {
         primary: '#2d6a4f',
         secondary: '#40916c',
-        accent: '#95d5b2',
-        background: '#f7fdfb',
-        text: '#1b4332'
+        accent: '#95d5b2'
       }
     }
   }
 
   const applyTheme = () => {
-    // 处理深色模式类
     const html = document.documentElement
+    
+    // 1. 处理深色模式类
     if (isDarkMode.value) {
       html.classList.add('dark')
     } else {
       html.classList.remove('dark')
     }
 
-    // 注入颜色变量
-    const config = themes[currentTheme.value] || themes.default
-    Object.entries(config.colors).forEach(([key, value]) => {
-      html.style.setProperty(`--color-${key}`, value)
-      // 同时兼容 Element Plus 的变量名
-      if (key === 'primary') {
-        html.style.setProperty('--el-color-primary', value)
-      }
-    })
+    // 2. 清理旧的行内颜色变量，防止污染
+    const oldKeys = ['primary', 'secondary', 'accent', 'background', 'text']
+    oldKeys.forEach(key => html.style.removeProperty(`--color-${key}`))
+
+    // 3. 注入当前主题的品牌核心色
+    const themeConfig = themes[currentTheme.value] || themes.default
+    if (themeConfig && themeConfig.colors) {
+      Object.entries(themeConfig.colors).forEach(([key, value]) => {
+        const colorValue = value as string
+        html.style.setProperty(`--color-${key}`, colorValue)
+        
+        // 同时同步 Element Plus 品牌主色
+        if (key === 'primary') {
+          html.style.setProperty('--el-color-primary', colorValue)
+        }
+      })
+    }
   }
 
   // 监听状态变化

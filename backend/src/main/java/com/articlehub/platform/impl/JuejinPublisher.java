@@ -62,6 +62,6 @@ public class JuejinPublisher implements PlatformPublisher {
 
     @Override
     public String getPlatformName() {
-        return "juejin";
+        return "稀土掘金";
     }
 }

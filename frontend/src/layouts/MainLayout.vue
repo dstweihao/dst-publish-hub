@@ -54,7 +54,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useThemeStore } from '@/stores/themeStore'
 import { useAuthStore } from '@/stores/authStore'
-import { DocumentCopy, Edit, List, Setting, Share, Moon, Sunny } from '@element-plus/icons-vue'
+import { DocumentCopy, Edit, List, Setting, Share, Moon, Sunny, Memo } from '@element-plus/icons-vue'
 
 const themeStore = useThemeStore()
 const authStore = useAuthStore()
@@ -67,7 +67,8 @@ const menuItems = [
   { path: '/editor', label: '编辑文章', icon: Edit },
   { path: '/articles', label: '文章管理', icon: List },
   { path: '/platforms', label: '平台配置', icon: Share },
-  { path: '/settings', label: '账户设置', icon: Setting }
+  { path: '/settings', label: '账户设置', icon: Setting },
+  { path: '/changelog', label: '更新日志', icon: Memo }
 ]
 
 const toggleDark = () => {

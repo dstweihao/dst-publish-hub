@@ -27,7 +27,7 @@
     <div class="editor-container">
       <MdEditor 
         v-model="article.markdown" 
-        theme="light"
+        :theme="themeStore.isDarkMode ? 'dark' : 'light'"
         :preview-theme="article.theme"
         class="md-editor-wrapper"
       />
@@ -42,8 +42,10 @@ import 'md-editor-v3/lib/style.css'
 import { ElMessage } from 'element-plus'
 import { DocumentCopy } from '@element-plus/icons-vue'
 import { useArticleStore } from '@/stores/articleStore'
+import { useThemeStore } from '@/stores/themeStore'
 
 const articleStore = useArticleStore()
+const themeStore = useThemeStore()
 const loading = ref(false)
 
 const article = reactive({
@@ -138,11 +140,29 @@ const copyToWechat = async () => {
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid var(--color-border);
+  background: var(--color-bg-card); /* 确保容器背景同步主题 */
+}
+
+html.dark .editor-container {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .md-editor-wrapper {
   width: 100%;
   height: 100%;
+  background: transparent !important;
+}
+
+/* 强制修正深色模式下的标题栏和下拉框背景 */
+html.dark :deep(.el-input__wrapper),
+html.dark :deep(.el-textarea__inner),
+html.dark :deep(.el-select__wrapper) {
+  background-color: var(--color-bg-card) !important;
+  box-shadow: 0 0 0 1px var(--color-border) inset !important;
+}
+
+html.dark :deep(.el-input__inner) {
+  color: var(--color-text-primary) !important;
 }
 
 

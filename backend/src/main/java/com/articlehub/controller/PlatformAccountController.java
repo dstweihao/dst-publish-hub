@@ -78,6 +78,8 @@ public class PlatformAccountController {
             account = existing.get();
             account.setUsername(platformRequest.getUsername());
             account.setAccessToken(platformRequest.getAccessToken());
+            account.setAccountId(platformRequest.getUsername()); // 同步至 accountId
+            account.setCredentials(platformRequest.getAccessToken()); // 同步至核心凭证字段
             account.setActive(true);
             account.setUpdatedAt(LocalDateTime.now());
         } else {
@@ -85,6 +87,8 @@ public class PlatformAccountController {
                     .user(user)
                     .platform(platformRequest.getPlatform())
                     .username(platformRequest.getUsername())
+                    .accountId(platformRequest.getUsername()) // 初始同步
+                    .credentials(platformRequest.getAccessToken()) // 初始同步核心凭证
                     .accessToken(platformRequest.getAccessToken())
                     .isActive(true)
                     .createdAt(LocalDateTime.now())

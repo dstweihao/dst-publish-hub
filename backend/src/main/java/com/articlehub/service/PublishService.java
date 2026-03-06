@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,7 +46,7 @@ public class PublishService {
             throw new RuntimeException("Unauthorized to publish this article");
         }
 
-        Map<String, PublishResult> results = new HashMap<>();
+        Map<String, PublishResult> results = new ConcurrentHashMap<>();
         List<CompletableFuture<Void>> futures = new ArrayList<>();
 
         for (String platform : platforms) {
@@ -111,16 +112,19 @@ public class PublishService {
                 .build();
         }
 
-        // 保存发布记录
-        PlatformPublish platformPublish = PlatformPublish.builder()
-            .article(article)
-            .platformAccount(platformAccount)
-            .platform(platform)
-            .status(result.isSuccess() ? "published" : "failed")
-            .platformUrl(result.getPublishedUrl())
-            .errorMessage(result.getErrorMessage())
-            .publishedAt(result.isSuccess() ? LocalDateTime.now() : null)
-            .build();
+        // 保存/更新发布记录（upsert：避免唯一键冲突）
+        PlatformPublish platformPublish = platformPublishRepository
+            .findByArticleIdAndPlatform(article.getId(), platform)
+            .orElseGet(() -> PlatformPublish.builder()
+                .article(article)
+                .platformAccount(platformAccount)
+                .platform(platform)
+                .build());
+
+        platformPublish.setStatus(result.isSuccess() ? "published" : "failed");
+        platformPublish.setPlatformUrl(result.getPublishedUrl());
+        platformPublish.setErrorMessage(result.getErrorMessage());
+        platformPublish.setPublishedAt(result.isSuccess() ? LocalDateTime.now() : null);
 
         platformPublishRepository.save(platformPublish);
 
