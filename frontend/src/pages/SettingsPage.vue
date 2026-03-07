@@ -1,47 +1,47 @@
 <template>
   <div class="settings-page">
-    <h1>账户设置</h1>
+    <h1>{{ $t('setting.title') }}</h1>
     
     <el-card>
       <template #header>
-        <span>个人信息</span>
+        <span>{{ $t('setting.profile') }}</span>
       </template>
-      <el-form :model="user" label-width="100px">
-        <el-form-item label="用户名">
+      <el-form :model="user" label-position="top">
+        <el-form-item :label="$t('setting.username')">
           <el-input v-model="user.username" disabled />
         </el-form-item>
-        <el-form-item label="邮箱">
+        <el-form-item :label="$t('setting.email')">
           <el-input v-model="user.email" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="updateProfile" :loading="updating">保存更改</el-button>
+          <el-button type="primary" @click="updateProfile" :loading="updating">{{ $t('setting.saveChanges') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card style="margin-top: 2rem;">
       <template #header>
-        <span>修改密码</span>
+        <span>{{ $t('setting.updatePwd') }}</span>
       </template>
-      <el-form :model="passwordForm" label-width="100px" ref="pwdFormRef">
-        <el-form-item label="当前密码" prop="currentPassword">
+      <el-form :model="passwordForm" label-position="top" ref="pwdFormRef">
+        <el-form-item :label="$t('setting.currentPwd')" prop="currentPassword">
           <el-input v-model="passwordForm.currentPassword" type="password" show-password />
         </el-form-item>
-        <el-form-item label="新密码" prop="newPassword">
+        <el-form-item :label="$t('setting.newPwd')" prop="newPassword">
           <el-input v-model="passwordForm.newPassword" type="password" show-password />
         </el-form-item>
-        <el-form-item label="确认新密码" prop="confirmPassword">
+        <el-form-item :label="$t('setting.confirmNewPwd')" prop="confirmPassword">
           <el-input v-model="passwordForm.confirmPassword" type="password" show-password />
         </el-form-item>
         <el-form-item>
-          <el-button type="warning" @click="updatePassword" :loading="updatingPwd">修改密码</el-button>
+          <el-button type="warning" @click="updatePassword" :loading="updatingPwd">{{ $t('setting.updatePwd') }}</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card style="margin-top: 2rem;">
       <template #header>
-        <span>主题设置</span>
+        <span>{{ $t('setting.themeSetting') }}</span>
       </template>
       <div class="theme-grid">
         <div v-for="(theme, key) in themeStore.themes" :key="key" 
@@ -55,10 +55,10 @@
     
     <el-card style="margin-top: 2rem;">
       <template #header>
-        <span>其他设置</span>
+        <span>{{ $t('setting.otherSetting') }}</span>
       </template>
-      <el-form label-width="150px">
-        <el-form-item label="深色模式">
+      <el-form label-position="left">
+        <el-form-item :label="$t('setting.darkMode')">
           <el-switch v-model="themeStore.isDarkMode" />
         </el-form-item>
       </el-form>
@@ -72,9 +72,11 @@ import { useThemeStore } from '@/stores/themeStore'
 import { useAuthStore } from '@/stores/authStore'
 import { ElMessage } from 'element-plus'
 import api from '@/utils/api'
+import { useI18n } from 'vue-i18n'
 
 const themeStore = useThemeStore()
 const authStore = useAuthStore()
+const { t } = useI18n()
 const updating = ref(false)
 const updatingPwd = ref(false)
 
@@ -99,7 +101,7 @@ onMounted(async () => {
 
 const updateProfile = async () => {
   if (!user.username || !user.email) {
-    ElMessage.error('用户名和邮箱不能为空')
+    ElMessage.error(t('setting.profileEmpty'))
     return
   }
   
@@ -111,7 +113,7 @@ const updateProfile = async () => {
     })
     // Update local store user
     authStore.user = res.data
-    ElMessage.success('个人信息已更新')
+    ElMessage.success(t('setting.profileSuccess'))
   } catch (err: any) {
     // Error is handled by api interceptor mostly, but we can catch here too.
     console.error('Update profile failed', err)
@@ -122,11 +124,11 @@ const updateProfile = async () => {
 
 const updatePassword = async () => {
   if (!passwordForm.currentPassword || !passwordForm.newPassword) {
-    ElMessage.error('请填写完整密码信息')
+    ElMessage.error(t('setting.pwdEmpty'))
     return
   }
   if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-    ElMessage.error('两次输入的新密码不一致')
+    ElMessage.error(t('setting.pwdMismatch'))
     return
   }
   
@@ -136,7 +138,7 @@ const updatePassword = async () => {
       currentPassword: passwordForm.currentPassword,
       newPassword: passwordForm.newPassword
     })
-    ElMessage.success('密码修改成功，请重新登录')
+    ElMessage.success(t('setting.pwdSuccess'))
     // Clear forms
     passwordForm.currentPassword = ''
     passwordForm.newPassword = ''

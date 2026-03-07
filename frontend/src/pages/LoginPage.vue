@@ -1,21 +1,21 @@
 <template>
   <div class="login-container">
     <div class="login-box">
-      <h1>文章发布平台</h1>
-      <p class="subtitle">登录你的账户</p>
+      <h1>{{ $t('auth.loginTitle') }}</h1>
+      <p class="subtitle">{{ $t('auth.loginSubtitle') }}</p>
       
-      <el-form :model="form" @submit.prevent="handleLogin">
-        <el-form-item label="邮箱">
-          <el-input v-model="form.email" placeholder="请输入邮箱" />
+      <el-form :model="form" @submit.prevent="handleLogin" label-position="top" size="large">
+        <el-form-item :label="$t('auth.email')">
+          <el-input v-model="form.email" :placeholder="$t('auth.emailPlaceholder')" />
         </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="form.password" type="password" placeholder="请输入密码" />
+        <el-form-item :label="$t('auth.password')">
+          <el-input v-model="form.password" type="password" :placeholder="$t('auth.passwordPlaceholder')" />
         </el-form-item>
-        <el-button type="primary" @click="handleLogin" :loading="loading">登录</el-button>
+        <el-button type="primary" @click="handleLogin" :loading="loading">{{ $t('auth.loginBtn') }}</el-button>
       </el-form>
       
       <div class="login-footer">
-        <p>没有账户？<router-link to="/register">注册新账户</router-link></p>
+        <p>{{ $t('auth.noAccount') }}<router-link to="/register">{{ $t('auth.registerLink') }}</router-link></p>
       </div>
     </div>
   </div>
@@ -25,8 +25,10 @@
 import { reactive, ref } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 import { ElMessage } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 
 const authStore = useAuthStore()
+const { t } = useI18n()
 const loading = ref(false)
 const form = reactive({
   email: '',
@@ -35,16 +37,16 @@ const form = reactive({
 
 const handleLogin = async () => {
   if (!form.email || !form.password) {
-    ElMessage.error('请输入邮箱和密码')
+    ElMessage.error(t('auth.fillAll'))
     return
   }
   
   loading.value = true
   try {
     await authStore.login(form.email, form.password)
-    ElMessage.success('登录成功')
+    ElMessage.success(t('auth.loginSuccess'))
   } catch (error) {
-    ElMessage.error('登录失败')
+    ElMessage.error(t('auth.loginFailed'))
   } finally {
     loading.value = false
   }

@@ -12,7 +12,6 @@ import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;

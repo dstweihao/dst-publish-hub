@@ -2,7 +2,7 @@
   <div class="main-layout">
     <header class="header">
       <div class="header-left">
-        <h1>📝 一稿通</h1>
+        <h1>📝 {{ $t('common.brand') }}</h1>
       </div>
       <div class="header-right">
         <!-- 多语言切换 -->

@@ -1,27 +1,27 @@
 <template>
   <div class="register-container">
     <div class="register-box">
-      <h1>创建新账户</h1>
-      <p class="subtitle">加入文章发布平台</p>
+      <h1>{{ $t('auth.registerTitle') }}</h1>
+      <p class="subtitle">{{ $t('auth.registerSubtitle') }}</p>
       
-      <el-form :model="form" @submit.prevent="handleRegister">
-        <el-form-item label="用户名">
-          <el-input v-model="form.username" placeholder="请输入用户名" />
+      <el-form :model="form" @submit.prevent="handleRegister" label-position="top" size="large">
+        <el-form-item :label="$t('auth.username')">
+          <el-input v-model="form.username" :placeholder="$t('auth.usernamePlaceholder')" />
         </el-form-item>
-        <el-form-item label="邮箱">
-          <el-input v-model="form.email" type="email" placeholder="请输入邮箱" />
+        <el-form-item :label="$t('auth.email')">
+          <el-input v-model="form.email" type="email" :placeholder="$t('auth.emailPlaceholder')" />
         </el-form-item>
-        <el-form-item label="密码">
-          <el-input v-model="form.password" type="password" placeholder="请输入密码" />
+        <el-form-item :label="$t('auth.password')">
+          <el-input v-model="form.password" type="password" :placeholder="$t('auth.passwordPlaceholder')" />
         </el-form-item>
-        <el-form-item label="确认密码">
-          <el-input v-model="form.confirmPassword" type="password" placeholder="请再次输入密码" />
+        <el-form-item :label="$t('auth.confirmPassword')">
+          <el-input v-model="form.confirmPassword" type="password" :placeholder="$t('auth.confirmPasswordPlaceholder')" />
         </el-form-item>
-        <el-button type="primary" @click="handleRegister" :loading="loading">注册</el-button>
+        <el-button type="primary" @click="handleRegister" :loading="loading">{{ $t('auth.registerBtn') }}</el-button>
       </el-form>
       
       <div class="register-footer">
-        <p>已有账户？<router-link to="/login">登录</router-link></p>
+        <p>{{ $t('auth.hasAccount') }}<router-link to="/login">{{ $t('auth.loginLink') }}</router-link></p>
       </div>
     </div>
   </div>
@@ -31,8 +31,10 @@
 import { reactive, ref } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 import { ElMessage } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 
 const authStore = useAuthStore()
+const { t } = useI18n()
 const loading = ref(false)
 const form = reactive({
   username: '',
@@ -43,21 +45,21 @@ const form = reactive({
 
 const handleRegister = async () => {
   if (!form.username || !form.email || !form.password) {
-    ElMessage.error('请填写所有字段')
+    ElMessage.error(t('auth.fillAll'))
     return
   }
   
   if (form.password !== form.confirmPassword) {
-    ElMessage.error('两次输入的密码不一致')
+    ElMessage.error(t('auth.passwordMismatch'))
     return
   }
   
   loading.value = true
   try {
     await authStore.register(form.username, form.email, form.password)
-    ElMessage.success('注册成功，请登录')
+    ElMessage.success(t('auth.registerSuccess'))
   } catch (error) {
-    ElMessage.error('注册失败')
+    ElMessage.error(t('auth.registerFailed'))
   } finally {
     loading.value = false
   }

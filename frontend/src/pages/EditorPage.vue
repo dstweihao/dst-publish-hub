@@ -174,7 +174,6 @@ html.dark .editor-container {
 .md-editor-wrapper {
   width: 100%;
   height: 100%;
-  background: transparent !important;
 }
 
 /* 强制修正深色模式下的标题栏和下拉框背景 */

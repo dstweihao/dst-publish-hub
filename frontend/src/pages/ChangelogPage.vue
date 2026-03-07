@@ -1,74 +1,74 @@
 <template>
   <div class="changelog-page">
     <div class="page-header">
-      <h1>更新日志</h1>
-      <p class="subtitle">记录每一次进化，见证我们的成长历程</p>
+      <h1>{{ $t('changelog.title') }}</h1>
+      <p class="subtitle">{{ $t('changelog.subtitle') }}</p>
     </div>
 
     <div class="timeline-container">
       <el-timeline>
-        <!-- v1.2.0: 自动化与凭证修复 -->
+        <!-- v1.2.0 -->
         <el-timeline-item timestamp="2026-03-07" placement="top" type="primary" size="large">
           <el-card class="changelog-card">
             <template #header>
               <div class="version-header">
-                <h3>v1.2.0 - 自动化引擎与发布深度优化</h3>
-                <el-tag type="success">最新</el-tag>
+                <h3>{{ $t('changelog.v1_2_0.title') }}</h3>
+                <el-tag type="success">{{ $t('changelog.latest') }}</el-tag>
               </div>
             </template>
             <div class="changelog-content">
-              <h4>🚀 新功能</h4>
+              <h4>{{ $t('changelog.v1_2_0.newFeatures') }}</h4>
               <ul>
-                <li><strong>浏览器辅助登录助手</strong>：引入 Playwright 自动化技术，支持一键引导用户登录并截获凭证，彻底解决 Token 获取难题。</li>
-                <li><strong>全新平台配置中心</strong>：重构了平台管理 UI，集成知乎蓝、掘金蓝等高清品牌图标，交互更直观。</li>
+                <li><strong>{{ $t('changelog.v1_2_0.feat1Title') }}</strong>：{{ $t('changelog.v1_2_0.feat1Desc') }}</li>
+                <li><strong>{{ $t('changelog.v1_2_0.feat2Title') }}</strong>：{{ $t('changelog.v1_2_0.feat2Desc') }}</li>
               </ul>
-              <h4>🛠️ 关键修复</h4>
+              <h4>{{ $t('changelog.v1_2_0.fixes') }}</h4>
               <ul>
-                <li><strong>发布凭证同步修复</strong>：重构后端凭证分发逻辑，解决 `credentials` 字段断供问题，知乎发布流程现已 100% 走通。</li>
-                <li><strong>接口闭环</strong>：补全了 `ArticleController` 中遗留的发布 TODO 接口，确保全量 API 均可正常调用。</li>
-                <li><strong>并发安全增强</strong>：发布结果容器升级为 `ConcurrentHashMap`，极大提升了多平台群发时的稳定性。</li>
+                <li><strong>{{ $t('changelog.v1_2_0.fix1Title') }}</strong>：{{ $t('changelog.v1_2_0.fix1Desc') }}</li>
+                <li><strong>{{ $t('changelog.v1_2_0.fix2Title') }}</strong>：{{ $t('changelog.v1_2_0.fix2Desc') }}</li>
+                <li><strong>{{ $t('changelog.v1_2_0.fix3Title') }}</strong>：{{ $t('changelog.v1_2_0.fix3Desc') }}</li>
               </ul>
             </div>
           </el-card>
         </el-timeline-item>
 
-        <!-- v1.1.0: 深色模式优化 -->
+        <!-- v1.1.0 -->
         <el-timeline-item timestamp="2026-03-06" placement="top">
           <el-card class="changelog-card">
             <template #header>
               <div class="version-header">
-                <h3>v1.1.0 - 极致深色模式与 UI 融合</h3>
+                <h3>{{ $t('changelog.v1_1_0.title') }}</h3>
               </div>
             </template>
             <div class="changelog-content">
-              <h4>🎨 视觉升级</h4>
+              <h4>{{ $t('changelog.v1_1_0.visual') }}</h4>
               <ul>
-                <li><strong>沉浸式深色模式</strong>：深度优化全局配色方案，消除 stark white 突兀感，编辑器与全站 UI 完美融合。</li>
-                <li><strong>玻璃拟态效果</strong>：登录页与注册页引入高级 Glassmorphism 设计，打造未来感视觉。</li>
+                <li><strong>{{ $t('changelog.v1_1_0.vis1Title') }}</strong>：{{ $t('changelog.v1_1_0.vis1Desc') }}</li>
+                <li><strong>{{ $t('changelog.v1_1_0.vis2Title') }}</strong>：{{ $t('changelog.v1_1_0.vis2Desc') }}</li>
               </ul>
-              <h4>⚙️ 系统增强</h4>
+              <h4>{{ $t('changelog.v1_1_0.system') }}</h4>
               <ul>
-                <li><strong>主题系统解耦</strong>：重构 `themeStore`，实现品牌颜色与深浅模式独立切换，互不冲突。</li>
-                <li><strong>Markdown 编辑器优化</strong>：实现了编辑器暗黑主题的动态跟随，阅读体验更出色。</li>
+                <li><strong>{{ $t('changelog.v1_1_0.sys1Title') }}</strong>：{{ $t('changelog.v1_1_0.sys1Desc') }}</li>
+                <li><strong>{{ $t('changelog.v1_1_0.sys2Title') }}</strong>：{{ $t('changelog.v1_1_0.sys2Desc') }}</li>
               </ul>
             </div>
           </el-card>
         </el-timeline-item>
 
-        <!-- v1.0.0: 初始版本 -->
+        <!-- v1.0.0 -->
         <el-timeline-item timestamp="2026-03-01" placement="top">
           <el-card class="changelog-card">
             <template #header>
               <div class="version-header">
-                <h3>v1.0.0 - 核心发布引擎诞生</h3>
+                <h3>{{ $t('changelog.v1_0_0.title') }}</h3>
               </div>
             </template>
             <div class="changelog-content">
-              <h4>🏗️ 核心成就</h4>
+              <h4>{{ $t('changelog.v1_0_0.core') }}</h4>
               <ul>
-                <li><strong>全栈架构搭建</strong>：完成 Spring Boot 3 + Vue 3 + MySQL 的核心框架集成。</li>
-                <li><strong>多平台分发引擎</strong>：初步实现微信、掘金、知乎等主流平台的适配器架构。</li>
-                <li><strong>文章管理系统</strong>：支持 Markdown 编辑、多图上传与本地草稿存储。</li>
+                <li><strong>{{ $t('changelog.v1_0_0.ach1Title') }}</strong>：{{ $t('changelog.v1_0_0.ach1Desc') }}</li>
+                <li><strong>{{ $t('changelog.v1_0_0.ach2Title') }}</strong>：{{ $t('changelog.v1_0_0.ach2Desc') }}</li>
+                <li><strong>{{ $t('changelog.v1_0_0.ach3Title') }}</strong>：{{ $t('changelog.v1_0_0.ach3Desc') }}</li>
               </ul>
             </div>
           </el-card>

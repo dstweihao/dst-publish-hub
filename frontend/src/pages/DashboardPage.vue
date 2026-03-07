@@ -1,13 +1,13 @@
 <template>
   <div class="dashboard">
-    <h1>仪表板</h1>
+    <h1>{{ $t('dashboard.title') }}</h1>
     
     <el-row :gutter="20">
       <el-col :xs="24" :sm="12" :md="6">
         <el-card class="stat-card">
           <template #header>
             <div class="card-header">
-              <span>文章总数</span>
+              <span>{{ $t('dashboard.totalArticles') }}</span>
             </div>
           </template>
           <div class="stat-number">{{ articleStore.articlesCount }}</div>
@@ -17,7 +17,7 @@
         <el-card class="stat-card">
           <template #header>
             <div class="card-header">
-              <span>草稿数</span>
+              <span>{{ $t('dashboard.drafts') }}</span>
             </div>
           </template>
           <div class="stat-number">{{ articleStore.draftArticles.length }}</div>
@@ -27,7 +27,7 @@
         <el-card class="stat-card">
           <template #header>
             <div class="card-header">
-              <span>已发布</span>
+              <span>{{ $t('dashboard.published') }}</span>
             </div>
           </template>
           <div class="stat-number">{{ articleStore.publishedArticles.length }}</div>
@@ -37,7 +37,7 @@
         <el-card class="stat-card">
           <template #header>
             <div class="card-header">
-              <span>连接平台</span>
+              <span>{{ $t('dashboard.connectedPlatforms') }}</span>
             </div>
           </template>
           <div class="stat-number">{{ articleStore.connectedPlatformsCount }}</div>
@@ -48,13 +48,13 @@
     <el-card style="margin-top: 2rem;">
       <template #header>
         <div class="card-header">
-          <span>快速操作</span>
+          <span>{{ $t('dashboard.quickActions') }}</span>
         </div>
       </template>
       <el-space wrap>
-        <el-button type="primary" @click="$router.push('/editor')">新建文章</el-button>
-        <el-button @click="$router.push('/articles')">管理文章</el-button>
-        <el-button @click="$router.push('/platforms')">配置平台</el-button>
+        <el-button type="primary" @click="$router.push('/editor')">{{ $t('dashboard.newArticle') }}</el-button>
+        <el-button @click="$router.push('/articles')">{{ $t('dashboard.manageArticles') }}</el-button>
+        <el-button @click="$router.push('/platforms')">{{ $t('dashboard.configPlatforms') }}</el-button>
       </el-space>
     </el-card>
   </div>

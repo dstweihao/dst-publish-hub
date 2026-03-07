@@ -6,29 +6,34 @@
       <template #header>
         <div class="card-header">
           <el-button type="primary" @click="$router.push('/editor')">{{ $t('article.newBtn') }}</el-button>
-          <el-input-group class="search-group">
-            <el-input v-model="searchText" :placeholder="$t('article.searchPlaceholder')" />
-            <el-button @click="handleSearch">{{ $t('common.confirm') }}</el-button>
-          </el-input-group>
+          <div class="search-group">
+            <el-input v-model="searchText" :placeholder="$t('article.searchPlaceholder')">
+              <template #append>
+                <el-button @click="handleSearch">{{ $t('common.confirm') }}</el-button>
+              </template>
+            </el-input>
+          </div>
         </div>
       </template>
       
       <el-table :data="filteredArticles" stripe v-loading="articleStore.loading">
-        <el-table-column prop="title" label="Title" min-width="200" />
-        <el-table-column prop="status" label="Status" width="100">
+        <el-table-column prop="title" :label="$t('article.table.title')" min-width="200" />
+        <el-table-column prop="status" :label="$t('article.table.status')" width="100">
           <template #default="{ row }">
             <el-tag :type="row.status === 'published' ? 'success' : 'info'">
               {{ $t('article.status.' + row.status) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="theme" label="Theme" width="100" />
-        <el-table-column prop="updatedAt" label="Updated Time" width="180" />
-        <el-table-column label="Actions" width="200" fixed="right">
+        <el-table-column prop="theme" :label="$t('article.table.theme')" width="100" />
+        <el-table-column prop="updatedAt" :label="$t('article.table.updatedAt')" width="180" />
+        <el-table-column :label="$t('article.table.actions')" min-width="260" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" @click="editArticle(row)">{{ $t('article.action.edit') }}</el-button>
-            <el-button size="small" type="primary" @click="publishArticle(row)">{{ $t('article.action.publish') }}</el-button>
-            <el-button size="small" type="danger" @click="deleteArticle(row)">{{ $t('article.action.delete') }}</el-button>
+            <el-space>
+              <el-button size="small" @click="editArticle(row)">{{ $t('article.action.edit') }}</el-button>
+              <el-button size="small" type="primary" @click="publishArticle(row)">{{ $t('article.action.publish') }}</el-button>
+              <el-button size="small" type="danger" @click="deleteArticle(row)">{{ $t('article.action.delete') }}</el-button>
+            </el-space>
           </template>
         </el-table-column>
       </el-table>
