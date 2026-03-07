@@ -70,6 +70,7 @@
       </template>
     </el-dialog>
 
+
     <!-- 发布结果反馈 -->
     <el-dialog v-model="resultDialogVisible" title="发布结果反馈" width="600px">
       <el-table :data="publishResults">
@@ -144,6 +145,7 @@ const selectedPlatforms = ref<string[]>([])
 const currentPublishArticleId = ref<any>(null)
 const publishResults = ref<any[]>([])
 
+
 const publishArticle = async (article: any) => {
   currentPublishArticleId.value = article.id
   publishDialogVisible.value = true
@@ -153,8 +155,6 @@ const publishArticle = async (article: any) => {
   try {
     const res = await api.get('/platforms')
     const connectedData = res.data || []
-    
-    // 匹配已连接的平台并丰富元数据
     connectedPlatforms.value = SUPPORTED_PLATFORMS.filter(p => 
       connectedData.some((c: any) => c.platform === p.name)
     )
@@ -164,6 +164,7 @@ const publishArticle = async (article: any) => {
     loadingPlatforms.value = false
   }
 }
+
 
 const confirmPublish = async () => {
   if (selectedPlatforms.value.length === 0) return
@@ -227,6 +228,27 @@ const deleteArticle = (article: any) => {
 
 .publish-dialog-content {
   padding: 10px 0;
+}
+
+.ai-settings-section {
+  margin-bottom: 4px;
+}
+
+.ai-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ai-section-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--el-color-primary);
+}
+
+.ai-form {
+  margin-bottom: 4px;
 }
 
 .dialog-tip {

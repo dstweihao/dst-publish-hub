@@ -4,14 +4,16 @@ import com.articlehub.entity.Article;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
-
     List<Article> findByUserUsername(String username);
-
     List<Article> findByCategory(String category);
-
     List<Article> findByStatus(String status);
+    List<Article> findByUserId(Long userId);
+    List<Article> findByScheduledAtBeforeAndStatus(LocalDateTime dateTime, String status);
+    long countByUserUsernameAndStatus(String username, String status);
+    long countByUserId(Long userId);
 }

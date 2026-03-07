@@ -2,7 +2,7 @@
   <div class="main-layout">
     <header class="header">
       <div class="header-left">
-        <h1>文章发布平台</h1>
+        <h1>📝 一稿通</h1>
       </div>
       <div class="header-right">
         <el-button link @click="toggleDark">

@@ -54,6 +54,13 @@ public class Article {
 
     private LocalDateTime publishedAt;
 
+    /** 定时发布时间，非 null 时表示等待定时发布 */
+    private LocalDateTime scheduledAt;
+
+    /** AI 生成的文章摘要 */
+    @Column(columnDefinition = "TEXT")
+    private String aiSummary;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

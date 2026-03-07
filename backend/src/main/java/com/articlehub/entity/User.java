@@ -29,6 +29,20 @@ public class User {
     private String password;
 
     private String fullName;
+
+    /** 会员套餐：FREE | PRO | TEAM */
+    @Builder.Default
+    private String plan = "FREE";
+
+    /** 套餐到期时间，null 表示永久或免费 */
+    private LocalDateTime planExpiredAt;
+
+    /** 此用户的邀请码（唯一） */
+    private String inviteCode;
+
+    /** 被谁邀请注册的邀请码 */
+    private String invitedByCode;
+
     private String role;
     private String avatar;
 

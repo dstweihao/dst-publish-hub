@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { MdEditor } from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import { ElMessage } from 'element-plus'
@@ -55,6 +55,16 @@ const article = reactive({
   content: ''
 })
 
+// 编辑模式：回填已有文章内容
+onMounted(() => {
+  const current = articleStore.currentArticle
+  if (current) {
+    article.title = current.title || ''
+    article.markdown = (current as any).markdown || (current as any).content || ''
+    article.theme = (current as any).theme || 'default'
+  }
+})
+
 const saveDraft = async () => {
   if (!article.title) {
     ElMessage.error('请输入文章标题')
@@ -63,14 +73,26 @@ const saveDraft = async () => {
   
   loading.value = true
   try {
-    await articleStore.createArticle({
-      title: article.title,
-      markdown: article.markdown,
-      content: article.markdown,
-      theme: article.theme,
-      status: 'draft'
-    })
-    ElMessage.success('文章已保存为草稿')
+    if (articleStore.currentArticle?.id) {
+      // 编辑模式 - 更新文章
+      await articleStore.updateArticle(String(articleStore.currentArticle.id), {
+        title: article.title,
+        markdown: article.markdown,
+        content: article.markdown,
+        theme: article.theme,
+      })
+      ElMessage.success('文章已更新')
+    } else {
+      // 新建模式
+      await articleStore.createArticle({
+        title: article.title,
+        markdown: article.markdown,
+        content: article.markdown,
+        theme: article.theme,
+        status: 'draft'
+      })
+      ElMessage.success('文章已保存为草稿')
+    }
   } finally {
     loading.value = false
   }

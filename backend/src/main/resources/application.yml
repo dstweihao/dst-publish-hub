@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
@@ -33,3 +33,9 @@ logging:
   level:
     root: INFO
     com.articlehub: DEBUG
+
+# AI 发布设置配置（默认使用通义千问，也支持 OpenAI 兼容接口）
+ai:
+  api-key: ""   # 在此填入你的 API Key（通义千问：https://dashscope.console.aliyun.com）
+  base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+  model: qwen-plus
