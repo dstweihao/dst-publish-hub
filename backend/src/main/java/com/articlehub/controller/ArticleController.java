@@ -78,32 +78,32 @@ public class ArticleController {
             @RequestBody PublishRequest request) {
         String email = jwtTokenProvider.getUsernameFromJWT(token.replace("Bearer ", ""));
         User user = userService.getUserByEmail(email);
-        
-        // 1. 调用已有的发布服务
+
+        // 1. 调用已有的发布服务，并将 extraMeta 透传
         Map<String, com.articlehub.platform.PublishResult> results = publishService.publishToMultiplePlatforms(
-            id, user.getId(), request.platforms
-        );
-        
+                id, user.getId(), request.platforms, request.extraMeta);
+
         return ApiResponse.success("Article publishing initiated", results);
     }
 
     private ArticleDTO convertToDTO(Article article) {
         return ArticleDTO.builder()
-            .id(article.getId())
-            .title(article.getTitle())
-            .content(article.getContent())
-            .description(article.getDescription())
-            .theme(article.getTheme())
-            .tags(article.getTags())
-            .status(article.getStatus())
-            .viewCount(article.getViewCount())
-            .createdAt(article.getCreatedAt())
-            .updatedAt(article.getUpdatedAt())
-            .publishedAt(article.getPublishedAt())
-            .build();
+                .id(article.getId())
+                .title(article.getTitle())
+                .content(article.getContent())
+                .description(article.getDescription())
+                .theme(article.getTheme())
+                .tags(article.getTags())
+                .status(article.getStatus())
+                .viewCount(article.getViewCount())
+                .createdAt(article.getCreatedAt())
+                .updatedAt(article.getUpdatedAt())
+                .publishedAt(article.getPublishedAt())
+                .build();
     }
 
     public static class PublishRequest {
         public java.util.List<String> platforms;
+        public Map<String, Object> extraMeta;
     }
 }

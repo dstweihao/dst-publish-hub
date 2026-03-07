@@ -1,4 +1,5 @@
 package com.articlehub.service;
+
 import com.articlehub.dto.ArticleDTO;
 import com.articlehub.dto.PublishStatistics;
 import com.articlehub.entity.Article;
@@ -36,11 +37,13 @@ public class PublishService {
      * 一键发布到多个平台
      */
     @Transactional
-    public Map<String, PublishResult> publishToMultiplePlatforms(Long articleId, Long userId, List<String> platforms) {
+    public Map<String, PublishResult> publishToMultiplePlatforms(Long articleId, Long userId, List<String> platforms,
+            Map<String, Object> extraMeta) {
         log.info("Publishing article {} to platforms: {}", articleId, platforms);
+        log.info("Received extraMeta payload: {}", extraMeta);
 
         Article article = articleRepositoryExtension.findById(articleId)
-            .orElseThrow(() -> new RuntimeException("Article not found"));
+                .orElseThrow(() -> new RuntimeException("Article not found"));
 
         if (!article.getUser().getId().equals(userId)) {
             throw new RuntimeException("Unauthorized to publish this article");
@@ -52,14 +55,14 @@ public class PublishService {
         for (String platform : platforms) {
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
                 try {
-                    PublishResult result = publishToSinglePlatform(article, userId, platform);
+                    PublishResult result = publishToSinglePlatform(article, userId, platform, extraMeta);
                     results.put(platform, result);
                 } catch (Exception e) {
                     log.error("Failed to publish to platform: {}", platform, e);
                     results.put(platform, PublishResult.builder()
-                        .success(false)
-                        .errorMessage(e.getMessage())
-                        .build());
+                            .success(false)
+                            .errorMessage(e.getMessage())
+                            .build());
                 }
             });
             futures.add(future);
@@ -81,13 +84,14 @@ public class PublishService {
      * 发布到单个平台
      */
     @Transactional
-    public PublishResult publishToSinglePlatform(Article article, Long userId, String platform) {
+    public PublishResult publishToSinglePlatform(Article article, Long userId, String platform,
+            Map<String, Object> extraMeta) {
         log.info("Publishing article {} to platform: {}", article.getId(), platform);
 
         // 获取平台账号
         PlatformAccount platformAccount = platformAccountRepository
-            .findByUserIdAndPlatform(userId, platform)
-            .orElseThrow(() -> new RuntimeException("Platform account not found for: " + platform));
+                .findByUserIdAndPlatform(userId, platform)
+                .orElseThrow(() -> new RuntimeException("Platform account not found for: " + platform));
 
         // 检查账号是否激活
         if (!platformAccount.isActive()) {
@@ -103,23 +107,24 @@ public class PublishService {
         // 执行发布
         PublishResult result;
         try {
-            result = publisher.publish(platformAccount.getAccountId(), platformAccount.getCredentials(), articleDTO);
+            result = publisher.publish(platformAccount.getAccountId(), platformAccount.getCredentials(), articleDTO,
+                    extraMeta);
         } catch (Exception e) {
             log.error("Error publishing to platform: {}", platform, e);
             result = PublishResult.builder()
-                .success(false)
-                .errorMessage(e.getMessage())
-                .build();
+                    .success(false)
+                    .errorMessage(e.getMessage())
+                    .build();
         }
 
         // 保存/更新发布记录（upsert：避免唯一键冲突）
         PlatformPublish platformPublish = platformPublishRepository
-            .findByArticleIdAndPlatform(article.getId(), platform)
-            .orElseGet(() -> PlatformPublish.builder()
-                .article(article)
-                .platformAccount(platformAccount)
-                .platform(platform)
-                .build());
+                .findByArticleIdAndPlatform(article.getId(), platform)
+                .orElseGet(() -> PlatformPublish.builder()
+                        .article(article)
+                        .platformAccount(platformAccount)
+                        .platform(platform)
+                        .build());
 
         platformPublish.setStatus(result.isSuccess() ? "published" : "failed");
         platformPublish.setPlatformUrl(result.getPublishedUrl());
@@ -144,17 +149,17 @@ public class PublishService {
      */
     public PublishStatistics getPublishStatistics(Long userId) {
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         long totalArticles = articleRepositoryExtension.countByUser(user);
         long publishedArticles = articleRepositoryExtension.countByUserAndStatus(user, "published");
         long totalPublishes = platformPublishRepository.countByArticleUserAndStatus(user, "published");
 
         return PublishStatistics.builder()
-            .totalArticles(totalArticles)
-            .publishedArticles(publishedArticles)
-            .totalPublishes(totalPublishes)
-            .build();
+                .totalArticles(totalArticles)
+                .publishedArticles(publishedArticles)
+                .totalPublishes(totalPublishes)
+                .build();
     }
 
     /**
@@ -163,34 +168,34 @@ public class PublishService {
     @Transactional
     public Map<String, PublishResult> retryFailedPublishes(Long articleId, Long userId) {
         List<PlatformPublish> failedPublishes = platformPublishRepository
-            .findByArticleIdAndStatus(articleId, "failed");
+                .findByArticleIdAndStatus(articleId, "failed");
 
         if (failedPublishes.isEmpty()) {
             throw new RuntimeException("No failed publishes to retry");
         }
 
         Article article = articleRepositoryExtension.findById(articleId)
-            .orElseThrow(() -> new RuntimeException("Article not found"));
+                .orElseThrow(() -> new RuntimeException("Article not found"));
 
         List<String> platforms = failedPublishes.stream()
-            .map(PlatformPublish::getPlatform)
-            .collect(Collectors.toList());
+                .map(PlatformPublish::getPlatform)
+                .collect(Collectors.toList());
 
-        return publishToMultiplePlatforms(articleId, userId, platforms);
+        return publishToMultiplePlatforms(articleId, userId, platforms, null);
     }
 
     private ArticleDTO convertToDTO(Article article) {
         return ArticleDTO.builder()
-            .id(article.getId())
-            .title(article.getTitle())
-            .content(article.getContent())
-            .description(article.getDescription())
-            .theme(article.getTheme())
-            .tags(article.getTags())
-            .status(article.getStatus())
-            .viewCount(article.getViewCount())
-            .createdAt(article.getCreatedAt())
-            .updatedAt(article.getUpdatedAt())
-            .build();
+                .id(article.getId())
+                .title(article.getTitle())
+                .content(article.getContent())
+                .description(article.getDescription())
+                .theme(article.getTheme())
+                .tags(article.getTags())
+                .status(article.getStatus())
+                .viewCount(article.getViewCount())
+                .createdAt(article.getCreatedAt())
+                .updatedAt(article.getUpdatedAt())
+                .build();
     }
 }

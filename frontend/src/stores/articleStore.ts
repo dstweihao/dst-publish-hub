@@ -62,13 +62,14 @@ export const useArticleStore = defineStore('article', () => {
     articles.value = articles.value.filter(a => a.id !== id)
   }
 
-  const publishToPlatforms = async (articleId: number | string, platformNames: string[]) => {
+  const publishToPlatforms = async (articleId: number | string, platformNames: string[], extraMeta?: Record<string, any>) => {
     loading.value = true
     try {
       // Endpoint is /api/publish/article/{articleId}
       // Note: baseURL is /api, so we use /publish/article/
       const response = await api.post(`/publish/article/${articleId}`, {
-        platforms: platformNames
+        platforms: platformNames,
+        extraMeta: extraMeta
       })
       return response.data
     } finally {

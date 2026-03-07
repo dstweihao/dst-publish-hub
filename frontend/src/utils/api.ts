@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 
 const api = axios.create({
   baseURL: '/api',
-  timeout: 10000
+  timeout: 360000 // 扩容为 6 分钟，给足手工操作时间
 })
 
 api.interceptors.request.use(config => {
@@ -20,12 +20,12 @@ api.interceptors.response.use(
   error => {
     const message = error.response?.data?.message || '请求出错'
     ElMessage.error(message)
-    
+
     if (error.response?.status === 401) {
       const authStore = useAuthStore()
       authStore.logout()
     }
-    
+
     return Promise.reject(error)
   }
 )

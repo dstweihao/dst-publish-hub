@@ -2,7 +2,7 @@ package com.articlehub.service;
 
 import com.articlehub.entity.Article;
 import com.articlehub.entity.PlatformAccount;
-import com.articlehub.repository.ArticleRepository;
+import com.articlehub.repository.ArticleRepositoryExtension;
 import com.articlehub.repository.PlatformAccountRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 public class ScheduledPublishService {
 
-    private final ArticleRepository articleRepository;
+    private final ArticleRepositoryExtension articleRepository;
     private final PlatformAccountRepository platformAccountRepository;
     private final PublishService publishService;
 
@@ -31,9 +31,9 @@ public class ScheduledPublishService {
     public void processScheduledPublishes() {
         try {
             List<Article> scheduledArticles = articleRepository.findByScheduledAtBeforeAndStatus(
-                LocalDateTime.now(), "scheduled"
-            );
-            if (scheduledArticles.isEmpty()) return;
+                    LocalDateTime.now(), "scheduled");
+            if (scheduledArticles.isEmpty())
+                return;
 
             log.info("发现 {} 篇定时发布文章，开始处理...", scheduledArticles.size());
             for (Article article : scheduledArticles) {
@@ -45,7 +45,7 @@ public class ScheduledPublishService {
                             .toList();
                     if (!platforms.isEmpty()) {
                         log.info("定时发布文章[{}] 到平台: {}", article.getId(), platforms);
-                        publishService.publishToMultiplePlatforms(article.getId(), userId, platforms);
+                        publishService.publishToMultiplePlatforms(article.getId(), userId, platforms, null);
                     }
                     // 更新状态（publishToMultiplePlatforms 内也会更新，这里作为兜底）
                     article.setScheduledAt(null);

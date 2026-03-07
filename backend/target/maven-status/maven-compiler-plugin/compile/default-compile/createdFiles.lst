@@ -12,6 +12,7 @@ com/articlehub/controller/PublishController.class
 com/articlehub/platform/impl/OpenSourceChinaPublisher.class
 com/articlehub/dto/PasswordUpdateRequest.class
 com/articlehub/util/JwtTokenProvider.class
+com/articlehub/platform/impl/JianshuPublisher.class
 com/articlehub/controller/SubscriptionController.class
 com/articlehub/entity/Article.class
 com/articlehub/dto/AuthResponse.class
@@ -28,10 +29,13 @@ com/articlehub/security/JwtAuthenticationFilter.class
 com/articlehub/entity/Article$ArticleBuilder.class
 com/articlehub/platform/PublishResult.class
 com/articlehub/controller/PublishController$PublishRequest.class
+com/articlehub/platform/impl/ToutiaoPublisher.class
 com/articlehub/entity/PlatformAccount$PlatformAccountBuilder.class
 com/articlehub/repository/UserRepository.class
+com/articlehub/job/CookieKeepAliveJob.class
 com/articlehub/dto/PlatformAccountDTO.class
 com/articlehub/controller/PlatformAccountController.class
+com/articlehub/platform/impl/BaijiahaoPublisher.class
 com/articlehub/platform/impl/SegmentfaultPublisher.class
 com/articlehub/service/UserService.class
 com/articlehub/controller/AuthController.class
@@ -55,7 +59,6 @@ com/articlehub/dto/UserDTO.class
 com/articlehub/platform/impl/CsdnPublisher.class
 com/articlehub/entity/PlatformPublish.class
 com/articlehub/dto/PlatformAccountRequest.class
-com/articlehub/platform/impl/BaiduPublisher.class
 com/articlehub/platform/impl/HashnodePublisher.class
 com/articlehub/dto/PlatformPublishDTO$PlatformPublishDTOBuilder.class
 com/articlehub/config/UserDetailsServiceImpl$1.class
@@ -67,6 +70,7 @@ com/articlehub/dto/PublishStatistics$PublishStatisticsBuilder.class
 com/articlehub/platform/impl/WechatPublisher.class
 com/articlehub/controller/AiController.class
 com/articlehub/service/AiService$AiPublishSettings.class
+com/articlehub/platform/impl/AbstractPlaywrightPublisher.class
 com/articlehub/dto/ArticleDTO$ArticleDTOBuilder.class
 com/articlehub/platform/PublishResult$PublishResultBuilder.class
 com/articlehub/service/AiService.class

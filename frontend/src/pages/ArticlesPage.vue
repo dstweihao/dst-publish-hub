@@ -62,6 +62,8 @@
             <el-button type="primary" @click="$router.push('/platforms')">去配置平台</el-button>
           </el-empty>
         </div>
+
+
       </div>
       
       <template #footer>
@@ -114,6 +116,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useArticleStore } from '@/stores/articleStore'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
+
 import api from '@/utils/api'
 import { SUPPORTED_PLATFORMS } from '@/config/platforms'
 
@@ -151,6 +154,7 @@ const currentPublishArticleId = ref<any>(null)
 const publishResults = ref<any[]>([])
 
 
+
 const publishArticle = async (article: any) => {
   currentPublishArticleId.value = article.id
   publishDialogVisible.value = true
@@ -176,7 +180,7 @@ const confirmPublish = async () => {
   
   publishing.value = true
   try {
-    const res = await articleStore.publishToPlatforms(currentPublishArticleId.value, selectedPlatforms.value)
+    const res = await articleStore.publishToPlatforms(currentPublishArticleId.value, selectedPlatforms.value, {})
     
     // Process results from backend
     const resultsMap = res || {}

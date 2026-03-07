@@ -31,8 +31,7 @@ public class PublishController {
         User user = userService.getUserByEmail(email);
 
         Map<String, PublishResult> results = publishService.publishToMultiplePlatforms(
-            articleId, user.getId(), request.getPlatforms()
-        );
+                articleId, user.getId(), request.getPlatforms(), request.getExtraMeta());
 
         return ApiResponse.success("Article published", results);
     }
@@ -84,6 +83,7 @@ public class PublishController {
 
     public static class PublishRequest {
         private List<String> platforms;
+        private Map<String, Object> extraMeta;
 
         public List<String> getPlatforms() {
             return platforms;
@@ -91,6 +91,14 @@ public class PublishController {
 
         public void setPlatforms(List<String> platforms) {
             this.platforms = platforms;
+        }
+
+        public Map<String, Object> getExtraMeta() {
+            return extraMeta;
+        }
+
+        public void setExtraMeta(Map<String, Object> extraMeta) {
+            this.extraMeta = extraMeta;
         }
     }
 }

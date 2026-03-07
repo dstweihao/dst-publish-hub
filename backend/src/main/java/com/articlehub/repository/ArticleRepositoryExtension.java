@@ -23,4 +23,6 @@ public interface ArticleRepositoryExtension extends JpaRepository<Article, Long>
     long countByUser(User user);
 
     long countByUserAndStatus(User user, String status);
+
+    List<Article> findByScheduledAtBeforeAndStatus(java.time.LocalDateTime scheduledAt, String status);
 }

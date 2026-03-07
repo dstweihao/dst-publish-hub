@@ -1,5 +1,6 @@
 package com.articlehub.platform.impl;
 
+import java.util.Map;
 import com.articlehub.dto.ArticleDTO;
 import com.articlehub.platform.PlatformPublisher;
 import com.articlehub.platform.PublishResult;
@@ -31,7 +32,7 @@ public class ZhihuPublisher implements PlatformPublisher {
     }
 
     @Override
-    public PublishResult publish(String accountId, String credentials, ArticleDTO article) {
+    public PublishResult publish(String accountId, String credentials, ArticleDTO article, Map<String, Object> extraMeta) {
         log.info("开始知乎 Playwright 自动化发布 - 账号: {}", accountId);
 
         if (credentials == null || credentials.isBlank()) {
