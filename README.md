@@ -1,8 +1,5 @@
 <div align="center">
   <img src="./logo.png" alt="DST Publish Hub Logo" width="120" style="border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px;" />
-  <br>
-  <img src="https://simpleicons.org/icons/vue-dot-js.svg" alt="Vue" width="30" />
-  <img src="https://simpleicons.org/icons/springboot.svg" alt="Spring" width="30" />
   <h1>DST Publish Hub (一稿通)</h1>
 
   <p>
