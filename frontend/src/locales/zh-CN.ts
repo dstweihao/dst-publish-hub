@@ -19,7 +19,8 @@ export default {
     platforms: '平台配置',
     settings: '系统设置',
     logout: '退出登录',
-    subscription: '会员中心'
+    subscription: '会员中心',
+    changelog: '更新日志'
   },
   platform: {
     title: '平台配置',

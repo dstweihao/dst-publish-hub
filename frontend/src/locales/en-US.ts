@@ -19,7 +19,8 @@ export default {
     platforms: 'Platforms',
     settings: 'Settings',
     logout: 'Logout',
-    subscription: 'Subscription'
+    subscription: 'Subscription',
+    changelog: 'Changelog'
   },
   platform: {
     title: 'Platforms Configuration',

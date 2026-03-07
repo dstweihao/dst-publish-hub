@@ -1,6 +1,7 @@
 <template>
   <div class="changelog-page">
     <div class="page-header">
+      <img src="/logo.png" alt="Logo" class="brand-logo" />
       <h1>{{ $t('changelog.title') }}</h1>
       <p class="subtitle">{{ $t('changelog.subtitle') }}</p>
     </div>
@@ -91,6 +92,15 @@
 .page-header {
   margin-bottom: 3rem;
   text-align: center;
+}
+
+.brand-logo {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 1rem auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .changelog-page h1 {
