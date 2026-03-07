@@ -1,14 +1,14 @@
 <template>
   <div class="editor-page">
     <div class="editor-header">
-      <h1>编辑文章</h1>
+      <h1>{{ $t('editor.title') }}</h1>
       <div class="editor-actions">
         <el-input 
           v-model="article.title" 
-          placeholder="输入文章标题"
+          :placeholder="t('editor.titlePlaceholder')"
           class="title-input"
         />
-        <el-select v-model="article.theme" placeholder="选择排版样式">
+        <el-select v-model="article.theme" :placeholder="t('editor.themeSelect')">
           <el-option label="默认排版 (适合技术)" value="default" />
           <el-option label="GitHub排版 (黑白极简)" value="github" />
           <el-option label="VuePress排版 (清新绿)" value="vuepress" />
@@ -18,9 +18,9 @@
         </el-select>
         <el-button type="success" @click="copyToWechat">
           <el-icon class="el-icon--left"><DocumentCopy /></el-icon>
-          复制到公众号
+          {{ $t('editor.copyToWechat') }}
         </el-button>
-        <el-button type="primary" @click="saveDraft" :loading="loading">保存草稿</el-button>
+        <el-button type="primary" @click="saveDraft" :loading="loading">{{ $t('editor.saveDraft') }}</el-button>
       </div>
     </div>
     
@@ -43,9 +43,11 @@ import { ElMessage } from 'element-plus'
 import { DocumentCopy } from '@element-plus/icons-vue'
 import { useArticleStore } from '@/stores/articleStore'
 import { useThemeStore } from '@/stores/themeStore'
+import { useI18n } from 'vue-i18n'
 
 const articleStore = useArticleStore()
 const themeStore = useThemeStore()
+const { t } = useI18n()
 const loading = ref(false)
 
 const article = reactive({
@@ -102,7 +104,7 @@ const copyToWechat = async () => {
   // md-editor-v3 uses class 'md-editor-preview' inside its root or wrapper
   const preview = document.querySelector('.md-editor-preview-wrapper') || document.querySelector('.md-editor-preview');
   if (!preview) {
-    ElMessage.error('找不到渲染区内容，如果页面空白请先写入 Markdown！');
+    ElMessage.error(t('common.error'));
     return;
   }
   

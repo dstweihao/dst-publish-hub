@@ -5,6 +5,23 @@
         <h1>📝 一稿通</h1>
       </div>
       <div class="header-right">
+        <!-- 多语言切换 -->
+        <el-dropdown @command="handleLanguageChange" style="margin-right: 16px;">
+          <el-button link>
+            <el-icon style="font-size: 18px;"><Memo /></el-icon>
+            <span style="margin-left: 4px; font-weight: 500;">
+              {{ currentLangLabel }}
+            </span>
+          </el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="zh-CN" :disabled="locale === 'zh-CN'">简体中文</el-dropdown-item>
+              <el-dropdown-item command="en-US" :disabled="locale === 'en-US'">English</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+
+        <!-- 深浅色切换 -->
         <el-button link @click="toggleDark">
           <el-icon v-if="isDarkMode"><Moon /></el-icon>
           <el-icon v-else><Sunny /></el-icon>
@@ -19,8 +36,8 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="navigateTo('settings')">设置</el-dropdown-item>
-              <el-dropdown-item divided @click="handleLogout">登出</el-dropdown-item>
+              <el-dropdown-item @click="navigateTo('settings')">{{ $t('nav.settings') }}</el-dropdown-item>
+              <el-dropdown-item divided @click="handleLogout">{{ $t('nav.logout') }}</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -37,7 +54,7 @@
             :class="['nav-item', { active: $route.path === item.path }]"
           >
             <el-icon><component :is="item.icon" /></el-icon>
-            <span>{{ item.label }}</span>
+            <span>{{ $t(item.labelKey) }}</span>
           </router-link>
         </nav>
       </aside>
@@ -55,21 +72,32 @@ import { useRouter } from 'vue-router'
 import { useThemeStore } from '@/stores/themeStore'
 import { useAuthStore } from '@/stores/authStore'
 import { DocumentCopy, Edit, List, Setting, Share, Moon, Sunny, Memo } from '@element-plus/icons-vue'
+import { useI18n } from 'vue-i18n'
 
 const themeStore = useThemeStore()
 const authStore = useAuthStore()
 const router = useRouter()
+const { locale } = useI18n()
 
 const isDarkMode = computed(() => themeStore.isDarkMode)
 
-const menuItems = [
-  { path: '/', label: '仪表板', icon: DocumentCopy },
-  { path: '/editor', label: '编辑文章', icon: Edit },
-  { path: '/articles', label: '文章管理', icon: List },
-  { path: '/platforms', label: '平台配置', icon: Share },
-  { path: '/settings', label: '账户设置', icon: Setting },
-  { path: '/changelog', label: '更新日志', icon: Memo }
-]
+// 根据选择的 locale 计算显示文本
+const currentLangLabel = computed(() => {
+  return locale.value === 'en-US' ? 'En' : '中'
+})
+
+const handleLanguageChange = (lang: 'zh-CN' | 'en-US') => {
+  locale.value = lang
+  localStorage.setItem('app-locale', lang)
+}
+
+const menuItems = computed(() => [
+  { path: '/', labelKey: 'nav.dashboard', icon: DocumentCopy },
+  { path: '/editor', labelKey: 'nav.editor', icon: Edit },
+  { path: '/articles', labelKey: 'nav.articles', icon: List },
+  { path: '/platforms', labelKey: 'nav.platforms', icon: Share },
+  { path: '/settings', labelKey: 'nav.settings', icon: Setting }
+])
 
 const toggleDark = () => {
   themeStore.toggleDarkMode()

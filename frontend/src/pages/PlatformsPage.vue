@@ -1,8 +1,8 @@
 <template>
   <div class="platforms-page">
     <div class="page-header">
-      <h1>平台配置</h1>
-      <p class="subtitle">连接您的社交媒体账号，开启一键群发之旅</p>
+      <h1>{{ $t('platform.title') }}</h1>
+      <p class="subtitle">连接您的社交媒体账号，开启一键群发之旅 / Connect your social media accounts</p>
     </div>
     
     <el-row :gutter="20">
@@ -17,7 +17,7 @@
             <div class="platform-info">
               <span class="platform-name">{{ platform.name }}</span>
               <el-tag size="small" :type="platform.connected ? 'success' : 'info'" border>
-                {{ platform.connected ? '已连接' : '未连接' }}
+                {{ platform.connected ? $t('platform.status.bound') : $t('platform.status.unbound') }}
               </el-tag>
             </div>
           </div>
@@ -26,10 +26,10 @@
             <p class="platform-desc">{{ platform.description }}</p>
             <div class="actions">
               <el-button v-if="!platform.connected" type="primary" plain @click="connectPlatform(platform)">
-                连接账户
+                {{ $t('platform.bindBtn') }}
               </el-button>
               <el-button v-else type="danger" plain @click="disconnectPlatform(platform)">
-                断开连接
+                {{ $t('platform.unbindBtn') }}
               </el-button>
             </div>
           </div>
@@ -49,12 +49,12 @@
       <template #footer>
         <div class="dialog-footer-actions">
           <el-button type="info" plain :loading="assisting" @click="startLoginAssist" icon="Promotion">
-            浏览器辅助登录 (推荐)
+            Browser Assist
           </el-button>
           <div class="standard-actions">
-            <el-button @click="dialogVisible = false">取消</el-button>
+            <el-button @click="dialogVisible = false">{{ $t('common.cancel') }}</el-button>
             <el-button type="primary" @click="saveAccount" :loading="submitting" :color="selectedPlatform?.color">
-              确认连接
+              {{ $t('common.confirm') }}
             </el-button>
           </div>
         </div>

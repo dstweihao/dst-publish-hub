@@ -1,34 +1,34 @@
 <template>
   <div class="articles-page">
-    <h1>文章管理</h1>
+    <h1>{{ $t('article.title') }}</h1>
     
     <el-card>
       <template #header>
         <div class="card-header">
-          <el-button type="primary" @click="$router.push('/editor')">新建文章</el-button>
+          <el-button type="primary" @click="$router.push('/editor')">{{ $t('article.newBtn') }}</el-button>
           <el-input-group class="search-group">
-            <el-input v-model="searchText" placeholder="搜索文章..." />
-            <el-button @click="handleSearch">搜索</el-button>
+            <el-input v-model="searchText" :placeholder="$t('article.searchPlaceholder')" />
+            <el-button @click="handleSearch">{{ $t('common.confirm') }}</el-button>
           </el-input-group>
         </div>
       </template>
       
       <el-table :data="filteredArticles" stripe v-loading="articleStore.loading">
-        <el-table-column prop="title" label="标题" min-width="200" />
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="title" label="Title" min-width="200" />
+        <el-table-column prop="status" label="Status" width="100">
           <template #default="{ row }">
             <el-tag :type="row.status === 'published' ? 'success' : 'info'">
-              {{ row.status }}
+              {{ $t('article.status.' + row.status) }}
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="theme" label="主题" width="100" />
-        <el-table-column prop="updatedAt" label="更新时间" width="180" />
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column prop="theme" label="Theme" width="100" />
+        <el-table-column prop="updatedAt" label="Updated Time" width="180" />
+        <el-table-column label="Actions" width="200" fixed="right">
           <template #default="{ row }">
-            <el-button size="small" @click="editArticle(row)">编辑</el-button>
-            <el-button size="small" type="primary" @click="publishArticle(row)">发布</el-button>
-            <el-button size="small" type="danger" @click="deleteArticle(row)">删除</el-button>
+            <el-button size="small" @click="editArticle(row)">{{ $t('article.action.edit') }}</el-button>
+            <el-button size="small" type="primary" @click="publishArticle(row)">{{ $t('article.action.publish') }}</el-button>
+            <el-button size="small" type="danger" @click="deleteArticle(row)">{{ $t('article.action.delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -199,12 +199,12 @@ const confirmPublish = async () => {
 
 const deleteArticle = (article: any) => {
   ElMessageBox.confirm(
-    '确定要删除该文章吗？',
-    '提示',
-    { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' }
+    'Delete this article ?',
+    'Warning',
+    { confirmButtonText: 'Yes', cancelButtonText: 'No', type: 'warning' }
   ).then(() => {
     articleStore.deleteArticle(article.id)
-    ElMessage.success('文章已删除')
+    ElMessage.success('Deleted')
   })
 }
 </script>
