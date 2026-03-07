@@ -1,6 +1,7 @@
 <template>
   <div class="register-container">
     <div class="register-box">
+      <img src="/logo.png" alt="Logo" class="brand-logo" />
       <h1>{{ $t('auth.registerTitle') }}</h1>
       <p class="subtitle">{{ $t('auth.registerSubtitle') }}</p>
       
@@ -77,6 +78,10 @@ const handleRegister = async () => {
   animation: gradientBG 15s ease infinite;
 }
 
+html.dark .register-container {
+  background: linear-gradient(-45deg, #0b2e26, #3b3109, #0d2940, #251230);
+}
+
 @keyframes gradientBG {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -105,6 +110,15 @@ html.dark .register-box {
 
 .register-box:hover {
   transform: translateY(-5px);
+}
+
+.brand-logo {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 1rem auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .register-box h1 {

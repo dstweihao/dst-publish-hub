@@ -2,7 +2,8 @@
   <div class="main-layout">
     <header class="header">
       <div class="header-left">
-        <h1>📝 {{ $t('common.brand') }}</h1>
+        <img src="/logo.png" alt="Logo" class="layout-logo" />
+        <h1>{{ $t('common.brand') }}</h1>
       </div>
       <div class="header-right">
         <!-- 多语言切换 -->
@@ -129,6 +130,19 @@ const handleLogout = () => {
   background: var(--color-background);
   border-bottom: 1px solid var(--color-border);
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.layout-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: contain;
 }
 
 .header-left h1 {

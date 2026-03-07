@@ -99,6 +99,12 @@ html.dark .el-dialog__header, html.dark .el-dialog__footer {
   background-color: var(--color-bg-card);
 }
 
+/* 降低 Markdown 编辑器预览区域中亮色排版主题的刺眼表现 */
+html.dark .md-editor-preview-wrapper,
+html.dark .md-editor-preview {
+  filter: brightness(0.8) contrast(1.05) saturate(0.9);
+}
+
 * {
   margin: 0;
   padding: 0;

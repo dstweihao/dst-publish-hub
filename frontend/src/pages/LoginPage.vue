@@ -1,6 +1,7 @@
 <template>
   <div class="login-container">
     <div class="login-box">
+      <img src="/logo.png" alt="Logo" class="brand-logo" />
       <h1>{{ $t('auth.loginTitle') }}</h1>
       <p class="subtitle">{{ $t('auth.loginSubtitle') }}</p>
       
@@ -64,6 +65,10 @@ const handleLogin = async () => {
   animation: gradientBG 15s ease infinite;
 }
 
+html.dark .login-container {
+  background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #141414);
+}
+
 @keyframes gradientBG {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -92,6 +97,15 @@ html.dark .login-box {
 
 .login-box:hover {
   transform: translateY(-5px);
+}
+
+.brand-logo {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 1rem auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .login-box h1 {
